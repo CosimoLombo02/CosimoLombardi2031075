@@ -23,19 +23,19 @@ In cybersecurity, statistics helps professionals detect unusual patterns, identi
 
 Using statistics, cybersecurity experts can make **data-driven decisions** that strengthen defenses and reduce risk.
 
-- **Risk Assessment and Management**
+ **Risk Assessment and Management** <br>
 Statistics aids in quantifying and assessing cybersecurity risks, enabling organizations to prioritize and allocate resources effectively. By analyzing historical data, statistical models can estimate the likelihood and potential impact of various cyber threats.
 
-- **Anomaly Detection**
+ **Anomaly Detection** <br>
 Statistical methods are employed to establish baselines of normal network behavior. Deviations from these baselines can indicate potential security incidents, such as unauthorized access or malware activity. Techniques like Bayesian statistics and Monte Carlo simulations are particularly useful in this context.
 
-- **Threat Prediction**
+ **Threat Prediction** <br>
 By analyzing trends and patterns in cyberattack data, statistical models can predict future threats. This proactive approach allows organizations to implement preventive measures before attacks occur.
 
-- **Evaluating Security Measures**
+ **Evaluating Security Measures** <br>
 Statistics is instrumental in assessing the effectiveness of security protocols. By analyzing data on security breaches and responses, organizations can identify weaknesses and improve their defense strategies.
 
-- **Statistical Analysis Approach**
+ **Statistical Analysis Approach** <br>
 Statistical analysis studies large amounts of data to discover underlying patterns and trends. It is a more accurate way to measure cybersecurity risk than traditional qualitative methods. Although this approach may seem obvious, it’s not the conventional method most organizations use.
 
 Richard Seiersen and Douglas Hubbard, in their book “How to Measure Anything in Cybersecurity,” advocate using probabilistic programming and statistical analysis to simplify and improve cyber risk measurement accuracy. [Source: Zengrc](https://www.zengrc.com/blog/the-statistical-analysis-of-measuring-cybersecurity-risk/)
@@ -106,6 +106,7 @@ Here a list of sources and interesting sites:
 - https://www.statology.org/7-statistical-methods-evaluating-cybersecurity-risks/
 - https://www.linkedin.com/advice/0/how-can-statistical-analysis-tools-identify-patterns-d0xfe
 - https://peris.ai/post/data-collection-in-cybersecurity-more-than-just-numbers
+
 
 
 
