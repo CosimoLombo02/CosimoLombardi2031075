@@ -44,7 +44,8 @@ Richard Seiersen and Douglas Hubbard, in their book “How to Measure Anything i
 
 ## Advanced Statistical Methods in Cybersecurity
 
-According to [Zengrc](https://www.zengrc.com/blog/the-statistical-analysis-of-measuring-cybersecurity-risk/), this is a list of the most important methods for Cybersecurity risks
+According to [Zengrc](https://www.zengrc.com/blog/the-statistical-analysis-of-measuring-cybersecurity-risk/), the following are key statistical methods for assessing cybersecurity risks.
+
 
 **Bayesian Statistics**  
 Computes the probability of events by incorporating prior knowledge, historical data, or expert beliefs. This approach allows organizations to continuously update their risk models as new threat information emerges, enhancing predictive accuracy over time.
@@ -101,11 +102,12 @@ The integration of statistical analysis into cybersecurity enables proactive def
 In summary, statistics is not just a theoretical tool—it is a practical necessity for enhancing security, reducing risk, and enabling organizations to make informed, strategic decisions in the ever-changing landscape of cybersecurity.
 
 Here a list of sources and interesting sites: 
-- https://www.zengrc.com/blog/the-statistical-analysis-of-measuring-cybersecurity-risk/
+- (https://www.zengrc.com/blog/the-statistical-analysis-of-measuring-cybersecurity-risk/)
 - https://www.sentinelone.com/cybersecurity-101/cybersecurity/cyber-security-statistics/
 - https://www.statology.org/7-statistical-methods-evaluating-cybersecurity-risks/
 - https://www.linkedin.com/advice/0/how-can-statistical-analysis-tools-identify-patterns-d0xfe
 - https://peris.ai/post/data-collection-in-cybersecurity-more-than-just-numbers
+
 
 
 
