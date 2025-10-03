@@ -1,4 +1,4 @@
-# CosimoLombardi2031075
+
 ## What is Statistics and Its Role in Cybersecurity
 
 **What is Statistics?**  
@@ -13,6 +13,7 @@ In cybersecurity, statistics helps professionals detect unusual patterns, identi
 - Predict and prevent future cyber attacks  
 
 Using statistics, cybersecurity experts can make **data-driven decisions** that strengthen defenses and reduce risk.
+
 
 
 
