@@ -7,5 +7,5 @@ It contains all of the homework assigned during the course, each homework has a 
 # Homework1 
 Why Statistics is important in Cybersecurity? 
 Cybersecurity is more important than ever. Using statistics, we can detect threats, analyze patterns, and prevent attacks before they happen.
-[Homework 1](Homework1.md)
+[Homework 1](homework1/homework1.md)
 
