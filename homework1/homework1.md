@@ -1,5 +1,5 @@
 # CosimoLombardi2031075
-## What is Statistics and Its Role in Cybersecurity
+## What is statistics, and why can it be useful for cybersecurity?
 
 **What is Statistics?**  
 Statistics is the science of collecting, analyzing, and interpreting data to uncover patterns, summarize information, and make evidence-based decisions. It includes methods for describing data, drawing conclusions from samples, and predicting future trends.
@@ -106,6 +106,7 @@ Here a list of sources and interesting sites:
 - https://www.statology.org/7-statistical-methods-evaluating-cybersecurity-risks/
 - https://www.linkedin.com/advice/0/how-can-statistical-analysis-tools-identify-patterns-d0xfe
 - https://peris.ai/post/data-collection-in-cybersecurity-more-than-just-numbers
+
 
 
 
