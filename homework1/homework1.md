@@ -101,12 +101,13 @@ The integration of statistical analysis into cybersecurity enables proactive def
 
 In summary, statistics is not just a theoretical tool—it is a practical necessity for enhancing security, reducing risk, and enabling organizations to make informed, strategic decisions in the ever-changing landscape of cybersecurity.
 
-Here a list of sources and interesting sites: 
+Here is a list of sources and interesting sites: 
 - [Zengrc - The Statistical Analysis of Measuring Cybersecurity Risk](https://www.zengrc.com/blog/the-statistical-analysis-of-measuring-cybersecurity-risk/)
 - [SentinelOne - Key Cyber Security Statistics for 2025](https://www.sentinelone.com/cybersecurity-101/cybersecurity/cyber-security-statistics/)
 - [Stratology - 7 Statistical Methods for Evaluating Cybersecurity Risks](https://www.statology.org/7-statistical-methods-evaluating-cybersecurity-risks/)
 - [Ateeb Wani, Matt Wyrick - How can statistical analysis tools identify patterns in cyber attacks?](https://www.linkedin.com/advice/0/how-can-statistical-analysis-tools-identify-patterns-d0xfe)
 - [Peris - Data Collection in Cybersecurity: More than Just Numbers](https://peris.ai/post/data-collection-in-cybersecurity-more-than-just-numbers)
+
 
 
 
