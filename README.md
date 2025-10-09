@@ -11,5 +11,5 @@ Cybersecurity is more important than ever. Using statistics, we can detect threa
 
 # Homework2
 Datasets and distribution, examples and many more
-[Homework 2](homework1/homework2.md)
+[Homework 2](homework2/homework2.md)
 
