@@ -9,3 +9,7 @@ What is statistics, and why can it be useful for cybersecurity?
 Cybersecurity is more important than ever. Using statistics, we can detect threats, analyze patterns, and prevent attacks before they happen.
 [Homework 1](homework1/homework1.md)
 
+# Homework2
+Datasets and distribution, examples and many more
+[Homework 2](homework1/homework2.md)
+
