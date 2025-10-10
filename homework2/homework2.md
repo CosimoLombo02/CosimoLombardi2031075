@@ -1,4 +1,4 @@
-# Understanding the Concept of a Dataset
+
 
 ##  Definition of a Dataset
 
@@ -183,5 +183,6 @@ Formally, a distribution can be defined as:
 ##  Summary
 
 A **distribution** is a fundamental concept in statistics that describes how values of a variable are spread across observations. Understanding distributions enables researchers to summarize data, identify patterns, and make informed inferences. Both univariate and multivariate distributions are essential for exploratory data analysis and advanced statistical modeling.
+
 
 
