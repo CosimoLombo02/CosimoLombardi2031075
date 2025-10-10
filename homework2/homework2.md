@@ -209,7 +209,9 @@ This document presents a small web-based tool and accompanying explanation for e
 
 ---
 
+#code
 
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -338,6 +340,7 @@ document.getElementById('myForm').addEventListener('submit', function(e){
 
 </body>
 </html>
+
 
 
 
