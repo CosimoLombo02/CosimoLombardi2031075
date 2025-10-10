@@ -211,151 +211,138 @@ This document presents a small web-based tool and accompanying explanation for e
 
 ## The full code
 
-Save the following as an `.html` file and open it in a modern browser:
 
 ```html
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Caesar Cipher: Classic, Brute-force, and Frequency Decoding</title>
-<style>
-  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial; padding:20px; max-width:900px; margin:0 auto; }
-  textarea, input[type="text"] { width:100%; box-sizing:border-box; font-family: monospace; margin:6px 0; }
-  pre.code { background:#f7f7f7; padding:10px; border-radius:6px; overflow:auto; }
-  .results { white-space: pre-wrap; background:#fafafa; padding:10px; border:1px solid #eee; border-radius:6px; margin-top:8px; }
-  label { display:block; margin-top:8px; }
-  button { margin-top:8px; }
-  small.note { color:#555; display:block; margin-top:6px; }
-</style>
+<meta charset="UTF-8">
+<title>Caesar Cipher Demo</title>
 </head>
 <body>
-<h1>Caesar Cipher Demo</h1>
-<p>This page demonstrates:</p>
-<ul>
-  <li>Classic Caesar encryption with <code>shift = 3</code>.</li>
-  <li>Brute-force decryption: produce all 1–25 shift candidates.</li>
-  <li>Automatic frequency-based decryption using chi‑square against English frequencies.</li>
-</ul>
 
-<label>Input plaintext (or plain text to encrypt):
-  <input type="text" id="plaintext" placeholder="Enter text here (e.g. Hello World)">
-</label>
+<h2>Caesar Cipher Demo</h2>
 
-<button id="runBtn">Run (encrypt, brute-force, frequency decode)</button>
-
-<div id="out" class="results" aria-live="polite"></div>
+<form id="myForm">
+  <input type="text" id="plaintext" size="50" placeholder="Enter text here">
+  <input type="submit" value="Enter">
+</form>
 
 <script>
-// English letter frequencies
+// Frequenze inglesi A-Z
 const freqEn = {
   A:8.17,B:1.49,C:2.78,D:4.25,E:12.70,F:2.23,G:2.02,H:6.09,I:6.97,J:0.15,K:0.77,L:4.03,M:2.41,
   N:6.75,O:7.51,P:1.93,Q:0.10,R:5.99,S:6.33,T:9.06,U:2.76,V:0.98,W:2.36,X:0.15,Y:1.97,Z:0.07
 };
 
-// Caesar encryption
-function caesarEncrypt(str, shift) {
-  let out = '';
-  for (let ch of str) {
-    if (/[A-Z]/.test(ch)) {
-      const base = 65;
-      out += String.fromCharCode((ch.charCodeAt(0) - base + shift) % 26 + base);
-    } else if (/[a-z]/.test(ch)) {
-      const base = 97;
-      out += String.fromCharCode((ch.charCodeAt(0) - base + shift) % 26 + base);
+// Cifrario classico di Cesare
+function caesar(str, shift) {
+  let result = '';
+  for (let i = 0; i < str.length; i++) {
+    let c = str[i];
+    if (c.match(/[a-z]/i)) {
+      let code = str.charCodeAt(i);
+      let base = (code >= 65 && code <= 90) ? 65 : 97;
+      result += String.fromCharCode(((code - base + shift) % 26) + base);
     } else {
-      out += ch;
+      result += c;
     }
+  }
+  return result;
+}
+
+// Funzione per decodifica brute-force
+function cesareDecode(str, shift){
+  let out='';
+  for(const c of str){
+    if(c.match(/[A-Z]/i)){
+      const base = c===c.toUpperCase()?65:97;
+      out += String.fromCharCode((c.charCodeAt(0)-base-shift+26)%26+base);
+    } else out+=c;
   }
   return out;
 }
 
-// Caesar decryption
-function caesarDecrypt(str, shift) {
-  let out = '';
-  for (let ch of str) {
-    if (/[A-Z]/.test(ch)) {
-      const base = 65;
-      out += String.fromCharCode((ch.charCodeAt(0) - base - shift + 26) % 26 + base);
-    } else if (/[a-z]/.test(ch)) {
-      const base = 97;
-      out += String.fromCharCode((ch.charCodeAt(0) - base - shift + 26) % 26 + base);
-    } else {
-      out += ch;
-    }
+function bruteForceDecode(text){
+  const results = [];
+  for(let shift=1; shift<26; shift++){
+    results.push({shift, text: cesareDecode(text, shift)});
   }
-  return out;
+  return results;
 }
 
-// Brute-force decode
-function bruteForceDecode(text) {
-  const list = [];
-  for (let s = 1; s < 26; s++) {
-    list.push({ shift: s, text: caesarDecrypt(text, s) });
-  }
-  return list;
+// Funzioni per decodifica tramite distribuzione
+function onlyLetters(s){
+  return s.toUpperCase().replace(/[^A-Z]/g,'');
 }
 
-// Frequency analysis
-function onlyLettersUpper(s) { return s.toUpperCase().replace(/[^A-Z]/g, ''); }
-function letterCounts(s) {
-  const clean = onlyLettersUpper(s);
+function letterCounts(s){
   const counts = Array(26).fill(0);
-  for (let ch of clean) counts[ch.charCodeAt(0) - 65]++;
-  return { counts, total: clean.length };
+  const clean = onlyLetters(s);
+  for(const ch of clean) counts[ch.charCodeAt(0)-65]++;
+  return {counts, total: clean.length};
 }
-function countsToPercent(counts, total) { return counts.map(c => total ? (c * 100 / total) : 0); }
-function chiSquared(obsPerc, expectedPerc) {
+
+function freqPercent(counts, total){
+  return counts.map(c => total? c*100/total: 0);
+}
+
+function chiSquared(obsPerc, expectedPerc){
   let chi = 0;
-  for (let i = 0; i < 26; i++) {
+  for(let i=0;i<26;i++){
     const O = obsPerc[i], E = expectedPerc[i];
-    if (E > 0) chi += ((O - E) * (O - E)) / E;
+    if(E>0) chi += ((O-E)*(O-E))/E;
   }
   return chi;
 }
-function rotateArray(arr, shift) {
-  const n = arr.length;
-  const out = new Array(n);
-  for (let i = 0; i < n; i++) out[i] = arr[(i + shift) % n];
-  return out;
-}
-function autoDecodeByFrequency(text) {
-  const { counts, total } = letterCounts(text);
-  if (total === 0) return { shift: 0, text: '', chi: Infinity };
-  const obsPerc = countsToPercent(counts, total);
-  const expectedArr = Object.keys(freqEn).map(k => freqEn[k]);
-  let bestShift = 0, bestChi = Infinity;
-  for (let s = 0; s < 26; s++) {
-    const rotated = rotateArray(obsPerc, s);
+
+function autoDecode(text){
+  const {counts,total} = letterCounts(text);
+  if(total===0) return {text:'',shift:0};
+
+  const obsPerc = freqPercent(counts,total);
+  const expectedArr = Object.keys(freqEn).map(k=>freqEn[k]);
+
+  let bestShift=0, bestChi=Infinity;
+  for(let shift=0; shift<26; shift++){
+    const rotated = obsPerc.map((v,i)=>obsPerc[(i+shift)%26]);
     const chi = chiSquared(rotated, expectedArr);
-    if (chi < bestChi) { bestChi = chi; bestShift = s; }
+    if(chi<bestChi){ bestChi=chi; bestShift=shift; }
   }
-  return { shift: bestShift, text: caesarDecrypt(text, bestShift), chi: bestChi };
+
+  return {text: cesareDecode(text,bestShift), shift: bestShift};
 }
 
-// UI
-document.getElementById('runBtn').addEventListener('click', () => {
-  const input = document.getElementById('plaintext').value || '';
-  if (!input) { document.getElementById('out').textContent = 'Please enter some text.'; return; }
+// Event listener form
+document.getElementById('myForm').addEventListener('submit', function(e){
+  e.preventDefault();
 
-  const classic = caesarEncrypt(input, 3);
-  const brute = bruteForceDecode(classic);
-  const auto = autoDecodeByFrequency(classic);
+  const testo = document.getElementById('plaintext').value;
+  if(!testo) return alert("Please enter some text!");
 
-  let out = '';
-  out += 'Original plaintext:\n' + input + '\n\n';
-  out += 'Classic Caesar (shift = 3):\n' + classic + '\n\n';
-  out += 'Brute-force candidates (shift => text):\n';
-  brute.forEach(r => out += `shift ${r.shift}: ${r.text}\n`);
-  out += '\n';
-  out += 'Frequency-based estimate (chi-squared):\n';
-  out += `Estimated shift: ${auto.shift}\nChi-squared: ${auto.chi.toFixed(2)}\nDecoded text:\n${auto.text}\n\n`;
-  document.getElementById('out').textContent = out;
+  // Classic Caesar shift 3
+  const classicCipher = caesar(testo,3);
+
+  // Brute-force
+  const brute = bruteForceDecode(classicCipher);
+  let bruteOutput = '';
+  brute.forEach(r => bruteOutput += `Shift ${r.shift}:\n${r.text}\n\n`);
+
+  // Auto decode via distribution
+  const auto = autoDecode(classicCipher);
+
+  // Mostra risultati in alert multipli
+  alert(`Plaintext:\n${testo}`);
+  alert(`Classic Caesar Cipher (shift 3):\n${classicCipher}`);
+  alert(`Brute-force (all shifts 1-25):\n${bruteOutput}`);
+  alert(`Auto-decoded via frequency:\nShift estimated: ${auto.shift}\n${auto.text}`);
 });
 </script>
+
 </body>
 </html>
+
+
 
 
 
