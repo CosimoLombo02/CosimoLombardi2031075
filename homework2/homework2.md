@@ -186,11 +186,11 @@ A **distribution** is a fundamental concept in statistics that describes how val
 
 ##Real usage examples
 
-#Univariate and bivariate distribution on a dataset
+# Univariate and bivariate distribution on a dataset
 
 
 
-#Using distribution to decrypt caesar cipher
+# Using distribution to decrypt caesar cipher
 
 
 
@@ -209,10 +209,7 @@ This document presents a small web-based tool and accompanying explanation for e
 
 ---
 
-## The full code
 
-
-```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -341,6 +338,7 @@ document.getElementById('myForm').addEventListener('submit', function(e){
 
 </body>
 </html>
+
 
 
 
