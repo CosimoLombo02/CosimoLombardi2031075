@@ -210,12 +210,7 @@ This part of the document presents a small web-based tool and accompanying expla
 ---
 
 
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Caesar Cipher Demo</title>
-</head>
-<body>
+
 
 <h2>Caesar Cipher Demo</h2>
 
@@ -335,13 +330,13 @@ document.getElementById('myForm').addEventListener('submit', function(e){
 });
 </script>
 
-</body>
-</html>
+
 
 
 # Code and explanation
 
 ![Code of the demo](./Caeser-chiper-demo.png)
+
 
 
 
