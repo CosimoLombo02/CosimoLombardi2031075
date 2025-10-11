@@ -196,7 +196,7 @@ A **distribution** is a fundamental concept in statistics that describes how val
 
 ## Presentation / Abstract
 
-This document presents a small web-based tool and accompanying explanation for encrypting text with the classic Caesar cipher (shift = 3), performing brute‑force decryption (trying all 25 possible shifts), and performing an automatic decryption attempt using letter‑frequency analysis (chi‑squared goodness‑of‑fit) against English letter frequencies. The tool is implemented in plain HTML + JavaScript for educational use and experimentation. The frequency‑based method provides a statistical estimate of the most likely shift and works reliably only on sufficiently long texts; brute‑force always produces all candidate plaintexts and is therefore the fallback for short inputs.
+This part of the document presents a small web-based tool and accompanying explanation for encrypting text with the classic Caesar cipher (shift = 3), performing brute‑force decryption (trying all 25 possible shifts), and performing an automatic decryption attempt using letter‑frequency analysis (chi‑squared goodness‑of‑fit) against English letter frequencies. The tool is implemented in plain HTML + JavaScript for educational use and experimentation. The frequency‑based method provides a statistical estimate of the most likely shift and works reliably only on sufficiently long texts; brute‑force always produces all candidate plaintexts and is therefore the fallback for short inputs.
 
 ---
 
@@ -211,8 +211,8 @@ This document presents a small web-based tool and accompanying explanation for e
 
 #code
 
-```html
-<!DOCTYPE html>
+
+
 <html>
 <head>
 <meta charset="UTF-8">
@@ -228,13 +228,13 @@ This document presents a small web-based tool and accompanying explanation for e
 </form>
 
 <script>
-// Frequenze inglesi A-Z
+// english letters frequencies A-Z
 const freqEn = {
   A:8.17,B:1.49,C:2.78,D:4.25,E:12.70,F:2.23,G:2.02,H:6.09,I:6.97,J:0.15,K:0.77,L:4.03,M:2.41,
   N:6.75,O:7.51,P:1.93,Q:0.10,R:5.99,S:6.33,T:9.06,U:2.76,V:0.98,W:2.36,X:0.15,Y:1.97,Z:0.07
 };
 
-// Cifrario classico di Cesare
+// classic caesar cipher
 function caesar(str, shift) {
   let result = '';
   for (let i = 0; i < str.length; i++) {
@@ -250,7 +250,7 @@ function caesar(str, shift) {
   return result;
 }
 
-// Funzione per decodifica brute-force
+// brute-force decode
 function cesareDecode(str, shift){
   let out='';
   for(const c of str){
@@ -270,7 +270,7 @@ function bruteForceDecode(text){
   return results;
 }
 
-// Funzioni per decodifica tramite distribuzione
+// decode via distribution
 function onlyLetters(s){
   return s.toUpperCase().replace(/[^A-Z]/g,'');
 }
@@ -330,7 +330,7 @@ document.getElementById('myForm').addEventListener('submit', function(e){
   // Auto decode via distribution
   const auto = autoDecode(classicCipher);
 
-  // Mostra risultati in alert multipli
+  // shows the results via multiple outputs
   alert(`Plaintext:\n${testo}`);
   alert(`Classic Caesar Cipher (shift 3):\n${classicCipher}`);
   alert(`Brute-force (all shifts 1-25):\n${bruteOutput}`);
@@ -340,6 +340,7 @@ document.getElementById('myForm').addEventListener('submit', function(e){
 
 </body>
 </html>
+
 
 
 
