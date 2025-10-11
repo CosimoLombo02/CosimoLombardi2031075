@@ -166,6 +166,7 @@ A **distribution** is a fundamental concept in statistics that describes how val
 Here is an example using a simple database created with Access DBMS. With two simple SQL queries, we can compute the univariate and bivariate distributions. The variables used are Età for the univariate distribution and Età and Studente for the bivariate distribution.
 <br>
 ![DB](./screenDB.png)
+<br> <br>
 Univariate distribution on Età 
 ```sql
 SELECT
@@ -545,6 +546,7 @@ The implemented code illustrates three essential concepts in classical cryptogra
 3. **Frequency-based statistical decryption**
 
 This exercise connects cryptographic theory with **distribution analysis**, showing how statistical reasoning can uncover hidden information. The algorithm highlights the transition from classical to modern cryptanalysis — from guessing keys to understanding data distributions.
+
 
 
 
