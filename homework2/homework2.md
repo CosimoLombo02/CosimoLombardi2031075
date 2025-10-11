@@ -147,30 +147,6 @@ Formally, a distribution can be defined as:
 
 ---
 
-##  Examples of Distributions
-
-### Example 1: Univariate Frequency Distribution
-
-```markdown
-| Age | Frequency |
-|-----|-----------|
-| 20  | 3         |
-| 21  | 5         |
-| 22  | 2         |
-```
-
-### Example 2: Bivariate Distribution
-
-```markdown
-| Height | Weight | Frequency |
-|--------|--------|-----------|
-| 160    | 55     | 2         |
-| 160    | 60     | 1         |
-| 165    | 60     | 3         |
-```
-
----
-
 ##  Importance of Distributions in Research
 
 * **Understanding Data Behavior:** Reveals patterns, skewness, and variability.
@@ -202,7 +178,7 @@ GROUP BY
 ORDER BY
     Età;
 ```
-Output <br>
+
 ![UNI](./screenUni.png)
 
 Bivariate distribution on Età, Studente
@@ -221,7 +197,7 @@ ORDER BY
     Studente;
 
 ```
-Output
+
 ![BI](./screenBI.png)
 ## Using distribution to decrypt caesar cipher
 
@@ -569,6 +545,7 @@ The implemented code illustrates three essential concepts in classical cryptogra
 3. **Frequency-based statistical decryption**
 
 This exercise connects cryptographic theory with **distribution analysis**, showing how statistical reasoning can uncover hidden information. The algorithm highlights the transition from classical to modern cryptanalysis — from guessing keys to understanding data distributions.
+
 
 
 
