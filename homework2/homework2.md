@@ -396,6 +396,17 @@ The more advanced part of the code uses **distribution analysis** — comparing 
 ### English frequency distribution
 
 English letters appear with characteristic probabilities (e.g., E ≈ 12.7%, T ≈ 9.1%, A ≈ 8.2%). These frequencies form a statistical “fingerprint” of the language.
+In the code, these values are stored in the freqEn object:
+```js
+const freqEn = {
+A: 8.17, B: 1.49, C: 2.78, D: 4.25, E: 12.70, F: 2.23, G: 2.02,
+H: 6.09, I: 6.97, J: 0.15, K: 0.77, L: 4.03, M: 2.41, N: 6.75,
+O: 7.51, P: 1.93, Q: 0.10, R: 5.99, S: 6.33, T: 9.06, U: 2.76,
+V: 0.98, W: 2.36, X: 0.15, Y: 1.97, Z: 0.07
+};
+
+```
+These percentages represent the average frequency of each letter in English text and serve as the statistical baseline for the chi-squared comparison.
 
 ### Algorithm steps
 
@@ -420,26 +431,64 @@ where:
 
 A smaller χ² indicates a closer match — thus a better decryption candidate.
 
-### Simplified code fragment
+### Distribution usage code fragment 
 
 ```js
+// Compute only uppercase letters
+function onlyLetters(s){
+return s.toUpperCase().replace(/[^A-Z]/g,'');
+}
+
+
+// Count occurrences of each letter
+function letterCounts(s){
+const counts = Array(26).fill(0);
+const clean = onlyLetters(s);
+for(const ch of clean) counts[ch.charCodeAt(0)-65]++;
+return {counts, total: clean.length};
+}
+
+
+// Convert counts to percentages
+function freqPercent(counts, total){
+return counts.map(c => total ? c*100/total : 0);
+}
+
+
+// Chi-squared comparison
+function chiSquared(obsPerc, expectedPerc){
+let chi = 0;
+for(let i=0;i<26;i++){
+const O = obsPerc[i], E = expectedPerc[i];
+if(E>0) chi += ((O-E)*(O-E))/E;
+}
+return chi;
+}
+
+
+// Automatic decoding based on distribution matching
 function autoDecode(text){
-  const {counts, total} = letterCounts(text);
-  const obsPerc = freqPercent(counts,total);
-  const expectedArr = Object.keys(freqEn).map(k => freqEn[k]);
+const {counts,total} = letterCounts(text);
+if(total===0) return {text:'',shift:0};
 
-  let bestShift = 0, bestChi = Infinity;
-  for(let shift=0; shift<26; shift++){
-    const rotated = obsPerc.map((v,i)=>obsPerc[(i+shift)%26]);
-    const chi = chiSquared(rotated, expectedArr);
-    if(chi<bestChi){ bestChi=chi; bestShift=shift; }
-  }
 
-  return {text: cesareDecode(text,bestShift), shift: bestShift};
+const obsPerc = freqPercent(counts,total);
+const expectedArr = Object.keys(freqEn).map(k=>freqEn[k]);
+
+
+let bestShift=0, bestChi=Infinity;
+for(let shift=0; shift<26; shift++){
+const rotated = obsPerc.map((v,i)=>obsPerc[(i+shift)%26]);
+const chi = chiSquared(rotated, expectedArr);
+if(chi<bestChi){ bestChi=chi; bestShift=shift; }
+}
+
+
+return {text: cesareDecode(text,bestShift), shift: bestShift};
 }
 ```
 
-This function applies the chi-squared comparison for all shifts and returns the most probable plaintext and key.
+These helper functions and the frequency table allow the program to analyze the statistical profile of the encrypted text, compare it to English, and identify the most probable shift value automatically.
 
 ---
 
@@ -487,6 +536,7 @@ The implemented code illustrates three essential concepts in classical cryptogra
 3. **Frequency-based statistical decryption**
 
 This exercise connects cryptographic theory with **distribution analysis**, showing how statistical reasoning can uncover hidden information. The algorithm highlights the transition from classical to modern cryptanalysis — from guessing keys to understanding data distributions.
+
 
 
 
