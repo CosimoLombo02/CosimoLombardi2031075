@@ -341,7 +341,8 @@ document.getElementById('myForm').addEventListener('submit', function(e){
 
 # Code and explanation
 
-![Code of the demo](Caesar-chiper-demo.png)
+![Code of the demo](./Caesar-chiper-demo.png)
+
 
 
 
