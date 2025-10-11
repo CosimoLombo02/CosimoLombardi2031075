@@ -186,15 +186,11 @@ A **distribution** is a fundamental concept in statistics that describes how val
 
 ##Real usage examples
 
-# Univariate and bivariate distribution on a dataset
+## Univariate and bivariate distribution on a dataset
 
 
 
-# Using distribution to decrypt caesar cipher
-
-
-
-## Presentation / Abstract
+## Using distribution to decrypt caesar cipher
 
 This part of the document presents a small web-based tool and accompanying explanation for encrypting text with the classic Caesar cipher (shift = 3), performing brute‑force decryption (trying all 25 possible shifts), and performing an automatic decryption attempt using letter‑frequency analysis (chi‑squared goodness‑of‑fit) against English letter frequencies. The tool is implemented in plain HTML + JavaScript for educational use and experimentation. The frequency‑based method provides a statistical estimate of the most likely shift and works reliably only on sufficiently long texts; brute‑force always produces all candidate plaintexts and is therefore the fallback for short inputs.
 
@@ -336,6 +332,163 @@ document.getElementById('myForm').addEventListener('submit', function(e){
 # Code and explanation
 
 ![Code of the demo](./Caeser-cipher-demo.png)
+
+
+
+---
+
+##  Overview of the Caesar Cipher
+
+The Caesar cipher is a **monoalphabetic substitution cipher** that shifts each letter of the plaintext by a fixed number of positions in the alphabet. For example, with a shift of 3:
+
+```
+Plaintext:  ABCDEFGHIJKLMNOPQRSTUVWXYZ
+Ciphertext: DEFGHIJKLMNOPQRSTUVWXYZABC
+```
+
+Encryption replaces each letter with the one located *n* positions later in the alphabet, wrapping around at the end. Decryption reverses the process.
+
+### Core function (encryption)
+
+```js
+function caesar(str, shift) {
+  let result = '';
+  for (let i = 0; i < str.length; i++) {
+    let c = str[i];
+    if (c.match(/[a-z]/i)) {
+      let code = str.charCodeAt(i);
+      let base = (code >= 65 && code <= 90) ? 65 : 97;
+      result += String.fromCharCode(((code - base + shift) % 26) + base);
+    } else {
+      result += c;
+    }
+  }
+  return result;
+}
+```
+
+This function loops through every character, checks if it is a letter, converts it to its ASCII code, applies the shift, and wraps around the alphabet using modular arithmetic (`% 26`). Non-letter characters (spaces, punctuation) remain unchanged.
+
+---
+
+##  Brute-force Decryption
+
+Since there are only **25 possible shifts**, the Caesar cipher can be easily broken by trying all possibilities. This is called a **brute-force attack**.
+
+### Logic
+
+For every possible shift value `1–25`, the program applies the reverse Caesar transformation and shows the result. The user can then visually inspect which output makes sense in English.
+
+```js
+for (let shift = 1; shift < 26; shift++) {
+  results.push({shift, text: cesareDecode(text, shift)});
+}
+```
+
+This step illustrates the **inherent weakness** of simple substitution ciphers — the limited keyspace.
+
+---
+
+##  Automatic Decryption via Frequency Analysis
+
+The more advanced part of the code uses **distribution analysis** — comparing the letter frequency of the encrypted text with the expected frequency of English letters (A–Z).
+
+### English frequency distribution
+
+English letters appear with characteristic probabilities (e.g., E ≈ 12.7%, T ≈ 9.1%, A ≈ 8.2%). These frequencies form a statistical “fingerprint” of the language.
+
+### Algorithm steps
+
+1. Count occurrences of each letter in the ciphertext.
+2. Compute observed letter frequencies.
+3. Rotate this frequency distribution by every possible shift.
+4. For each rotation, compute the **chi-squared statistic** against the reference English distribution.
+5. The shift that minimizes the chi-squared value is the most likely key.
+
+### Chi-squared test
+
+The **chi-squared** value measures how far the observed frequencies deviate from expected ones:
+
+```
+χ² = Σ ((O - E)² / E)
+```
+
+where:
+
+* `O` = observed percentage of a letter
+* `E` = expected English percentage of that letter
+
+A smaller χ² indicates a closer match — thus a better decryption candidate.
+
+### Simplified code fragment
+
+```js
+function autoDecode(text){
+  const {counts, total} = letterCounts(text);
+  const obsPerc = freqPercent(counts,total);
+  const expectedArr = Object.keys(freqEn).map(k => freqEn[k]);
+
+  let bestShift = 0, bestChi = Infinity;
+  for(let shift=0; shift<26; shift++){
+    const rotated = obsPerc.map((v,i)=>obsPerc[(i+shift)%26]);
+    const chi = chiSquared(rotated, expectedArr);
+    if(chi<bestChi){ bestChi=chi; bestShift=shift; }
+  }
+
+  return {text: cesareDecode(text,bestShift), shift: bestShift};
+}
+```
+
+This function applies the chi-squared comparison for all shifts and returns the most probable plaintext and key.
+
+---
+
+##  Integration with the Web Form
+
+The HTML interface provides a text input and uses JavaScript event listeners to handle encryption and decryption:
+
+1. **User inputs text**.
+2. The script encrypts it with shift 3.
+3. Then, it runs both brute-force and automatic decryption methods.
+4. The results (ciphertext, all possible plaintexts, and the statistically best guess) are displayed via alert boxes.
+
+This provides an interactive demonstration of both cryptographic theory and frequency analysis.
+
+---
+
+##  Algorithmic Summary
+
+| Stage                  | Method                    | Description                                                |
+| ---------------------- | ------------------------- | ---------------------------------------------------------- |
+| Encryption             | Fixed shift (Caesar)      | Substitution cipher using modular arithmetic               |
+| Brute-force Decryption | Exhaustive search         | Tests all 25 possible shifts                               |
+| Automatic Decryption   | Statistical (chi-squared) | Estimates the most likely key using frequency distribution |
+
+---
+
+##  Cryptographic Implications
+
+The Caesar cipher is **historically important** but **cryptographically obsolete**. It demonstrates the core idea of substitution ciphers but fails against modern analysis:
+
+* **Small keyspace** (only 25 possible keys)
+* **Predictable frequency patterns**
+* **No resistance to statistical attacks**
+
+However, it remains valuable for **educational and historical** purposes and as an introduction to the relationship between **language statistics** and **encryption security**.
+
+---
+
+##  Conclusion
+
+The implemented code illustrates three essential concepts in classical cryptography:
+
+1. **Simple substitution encryption** (Caesar cipher)
+2. **Brute-force key recovery**
+3. **Frequency-based statistical decryption**
+
+This exercise connects cryptographic theory with **distribution analysis**, showing how statistical reasoning can uncover hidden information. The algorithm highlights the transition from classical to modern cryptanalysis — from guessing keys to understanding data distributions.
+
+
 
 
 
