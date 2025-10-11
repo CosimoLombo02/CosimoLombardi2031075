@@ -209,9 +209,6 @@ This part of the document presents a small web-based tool and accompanying expla
 
 ---
 
-#code
-
-
 
 <html>
 <head>
@@ -340,6 +337,10 @@ document.getElementById('myForm').addEventListener('submit', function(e){
 
 </body>
 </html>
+
+
+# Code and explanation
+
 
 
 
