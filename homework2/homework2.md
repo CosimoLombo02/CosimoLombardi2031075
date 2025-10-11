@@ -184,12 +184,44 @@ Formally, a distribution can be defined as:
 
 A **distribution** is a fundamental concept in statistics that describes how values of a variable are spread across observations. Understanding distributions enables researchers to summarize data, identify patterns, and make informed inferences. Both univariate and multivariate distributions are essential for exploratory data analysis and advanced statistical modeling.
 
-##Real usage examples
+
 
 ## Univariate and bivariate distribution on a dataset
+Here is an example using a simple database created with Access DBMS. With two simple SQL queries, we can compute the univariate and bivariate distributions. The variables used are Età for the univariate distribution and Età and Studente for the bivariate distribution.
+![DB](./screenDB.png)
+Univariate distribution on Età 
+```sql
+SELECT
+    Età,
+    COUNT(*) AS frequenza
+FROM
+    Dati
+GROUP BY
+    Età
+ORDER BY
+    Età;
+```
+Output
+![UNI](./screenUNI.png)
 
+Bivariate distribution on Età, Studente
+```sql
+SELECT
+    Età,
+    Studente,
+    COUNT(*) AS frequenza
+FROM
+    Dati
+GROUP BY
+    Età,
+    Studente
+ORDER BY
+    Età,
+    Studente;
 
-
+```
+Output
+![BI](./screenBI.png)
 ## Using distribution to decrypt caesar cipher
 
 This part of the document presents a small web-based tool and accompanying explanation for encrypting text with the classic Caesar cipher (shift = 3), performing brute‑force decryption (trying all 25 possible shifts), and performing an automatic decryption attempt using letter‑frequency analysis (chi‑squared goodness‑of‑fit) against English letter frequencies. The tool is implemented in plain HTML + JavaScript for educational use and experimentation. The frequency‑based method provides a statistical estimate of the most likely shift and works reliably only on sufficiently long texts; brute‑force always produces all candidate plaintexts and is therefore the fallback for short inputs.
@@ -536,6 +568,7 @@ The implemented code illustrates three essential concepts in classical cryptogra
 3. **Frequency-based statistical decryption**
 
 This exercise connects cryptographic theory with **distribution analysis**, showing how statistical reasoning can uncover hidden information. The algorithm highlights the transition from classical to modern cryptanalysis — from guessing keys to understanding data distributions.
+
 
 
 
