@@ -1,4 +1,5 @@
-
+# CosimoLombardi2031075
+# Dataset, distributions and some examples
 
 #  Definition of a Dataset
 
@@ -546,6 +547,7 @@ The implemented code illustrates three essential concepts in classical cryptogra
 3. **Frequency-based statistical decryption**
 
 This exercise connects cryptographic theory with **distribution analysis**, showing how statistical reasoning can uncover hidden information. The algorithm highlights the transition from classical to modern cryptanalysis — from guessing keys to understanding data distributions.
+
 
 
 
