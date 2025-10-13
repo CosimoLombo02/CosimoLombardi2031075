@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Caesar Cipher Demo</title>
+<title> Letter distribution and Caesar Cipher Demo</title>
 </head>
 <body>
 
@@ -14,13 +14,13 @@
 </form>
 
 <script>
-// Frequenze inglesi A-Z
+// english letter frequencies 
 const freqEn = {
   A:8.17,B:1.49,C:2.78,D:4.25,E:12.70,F:2.23,G:2.02,H:6.09,I:6.97,J:0.15,K:0.77,L:4.03,M:2.41,
   N:6.75,O:7.51,P:1.93,Q:0.10,R:5.99,S:6.33,T:9.06,U:2.76,V:0.98,W:2.36,X:0.15,Y:1.97,Z:0.07
 };
 
-// Cifrario classico di Cesare
+// Classic caesar cipher
 function caesar(str, shift) {
   let result = '';
   for (let i = 0; i < str.length; i++) {
@@ -36,7 +36,7 @@ function caesar(str, shift) {
   return result;
 }
 
-// Funzione per decodifica brute-force
+// function for bruteforce decode
 function cesareDecode(str, shift){
   let out='';
   for(const c of str){
@@ -56,7 +56,7 @@ function bruteForceDecode(text){
   return results;
 }
 
-// Funzioni per decodifica tramite distribuzione
+// function for decode via distribution
 function onlyLetters(s){
   return s.toUpperCase().replace(/[^A-Z]/g,'');
 }
@@ -106,7 +106,7 @@ document.getElementById('myForm').addEventListener('submit', function(e){
   if(!testo) return alert("Please enter some text!");
 
   // Classic Caesar shift 3
-  const classicCipher = caesar(testo,4);
+  const classicCipher = caesar(testo,3);
 
   // Brute-force
   const brute = bruteForceDecode(classicCipher);
@@ -116,8 +116,24 @@ document.getElementById('myForm').addEventListener('submit', function(e){
   // Auto decode via distribution
   const auto = autoDecode(classicCipher);
 
-  // Mostra risultati in alert multipli
+  //Letter distribution in the plaintext 
+  const { counts, total } = letterCounts(testo);
+  
+
+  let distributionOutput = 'Letter distribution (count):\n\n';
+  for (let i = 0; i < 26; i++) {
+    const letter = String.fromCharCode(65 + i); // A to Z
+    const count = counts[i];
+    
+    if (count > 0) {
+      distributionOutput += `${letter}: ${count} occurrence(s)\n`;
+    }
+  }
+
+
+  // shows result in multiple alerts
   alert(`Plaintext:\n${testo}`);
+  alert(`Letter distribution:\n${distributionOutput}`);
   alert(`Classic Caesar Cipher (shift 3):\n${classicCipher}`);
   alert(`Brute-force (all shifts 1-25):\n${bruteOutput}`);
   alert(`Auto-decoded via frequency:\nShift estimated: ${auto.shift}\n${auto.text}`);
