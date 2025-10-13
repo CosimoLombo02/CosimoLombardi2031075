@@ -346,7 +346,7 @@ document.getElementById('myForm').addEventListener('submit', function(e){
 
   // shows result in multiple alerts
   alert(`Plaintext:\n${testo}`);
-  alert(`Letter distribution:\n${distributionOutput}`);
+  alert(`${distributionOutput}`);
   alert(`Classic Caesar Cipher (shift 3):\n${classicCipher}`);
   alert(`Brute-force (all shifts 1-25):\n${bruteOutput}`);
   alert(`Auto-decoded via frequency:\nShift estimated: ${auto.shift}\n${auto.text}`);
@@ -584,6 +584,7 @@ The implemented code illustrates three essential concepts in classical cryptogra
 3. **Frequency-based statistical decryption**
 
 This exercise connects cryptographic theory with **distribution analysis**, showing how statistical reasoning can uncover hidden information. The algorithm highlights the transition from classical to modern cryptanalysis — from guessing keys to understanding data distributions.
+
 
 
 
