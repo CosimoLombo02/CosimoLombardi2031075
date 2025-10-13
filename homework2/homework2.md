@@ -360,7 +360,7 @@ document.getElementById('myForm').addEventListener('submit', function(e){
 
 # Code and explanation
 
-![Code of the demo](./Caesar-cipher-demo.png)
+![Code of the demo](./code.png)
 
 
 
@@ -584,6 +584,7 @@ The implemented code illustrates three essential concepts in classical cryptogra
 3. **Frequency-based statistical decryption**
 
 This exercise connects cryptographic theory with **distribution analysis**, showing how statistical reasoning can uncover hidden information. The algorithm highlights the transition from classical to modern cryptanalysis — from guessing keys to understanding data distributions.
+
 
 
 
