@@ -1,6 +1,6 @@
 
 
-##  Definition of a Dataset
+#  Definition of a Dataset
 
 A **dataset** is fundamentally a structured collection of data, typically organized in such a way that each piece of data is related to other pieces, enabling analysis and interpretation. In statistical, computational, and research contexts, a dataset represents **a set of observations or measurements** about a particular phenomenon, population, or process.
 
@@ -546,6 +546,7 @@ The implemented code illustrates three essential concepts in classical cryptogra
 3. **Frequency-based statistical decryption**
 
 This exercise connects cryptographic theory with **distribution analysis**, showing how statistical reasoning can uncover hidden information. The algorithm highlights the transition from classical to modern cryptanalysis — from guessing keys to understanding data distributions.
+
 
 
 
