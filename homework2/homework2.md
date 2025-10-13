@@ -219,7 +219,7 @@ This part of the document presents a small web-based tool and accompanying expla
 
 
 
-<h2>Caesar Cipher Demo</h2>
+<h2>Letter Distribution and Caesar Cipher Demo</h2>
 
 <form id="myForm">
   <input type="text" id="plaintext" size="50" placeholder="Enter text here">
@@ -227,13 +227,13 @@ This part of the document presents a small web-based tool and accompanying expla
 </form>
 
 <script>
-// english letters frequencies A-Z
+// english letter frequencies (english alphabet)
 const freqEn = {
   A:8.17,B:1.49,C:2.78,D:4.25,E:12.70,F:2.23,G:2.02,H:6.09,I:6.97,J:0.15,K:0.77,L:4.03,M:2.41,
   N:6.75,O:7.51,P:1.93,Q:0.10,R:5.99,S:6.33,T:9.06,U:2.76,V:0.98,W:2.36,X:0.15,Y:1.97,Z:0.07
 };
 
-// classic caesar cipher
+// Classic caesar cipher
 function caesar(str, shift) {
   let result = '';
   for (let i = 0; i < str.length; i++) {
@@ -249,7 +249,7 @@ function caesar(str, shift) {
   return result;
 }
 
-// brute-force decode
+//  bruteforce decode
 function cesareDecode(str, shift){
   let out='';
   for(const c of str){
@@ -269,7 +269,7 @@ function bruteForceDecode(text){
   return results;
 }
 
-// decode via distribution
+//  decode via distribution
 function onlyLetters(s){
   return s.toUpperCase().replace(/[^A-Z]/g,'');
 }
@@ -329,13 +329,31 @@ document.getElementById('myForm').addEventListener('submit', function(e){
   // Auto decode via distribution
   const auto = autoDecode(classicCipher);
 
-  // shows the results via multiple outputs
+  //Letter distribution in the plaintext 
+  const { counts, total } = letterCounts(testo);
+  
+
+  let distributionOutput = 'Letter distribution (count):\n\n';
+  for (let i = 0; i < 26; i++) {
+    const letter = String.fromCharCode(65 + i); // A to Z
+    const count = counts[i];
+    
+    if (count > 0) {
+      distributionOutput += `${letter}: ${count} occurrence(s)\n`;
+    }
+  }
+
+
+  // shows result in multiple alerts
   alert(`Plaintext:\n${testo}`);
+  alert(`Letter distribution:\n${distributionOutput}`);
   alert(`Classic Caesar Cipher (shift 3):\n${classicCipher}`);
   alert(`Brute-force (all shifts 1-25):\n${bruteOutput}`);
   alert(`Auto-decoded via frequency:\nShift estimated: ${auto.shift}\n${auto.text}`);
 });
 </script>
+
+
 
 
 
@@ -347,6 +365,25 @@ document.getElementById('myForm').addEventListener('submit', function(e){
 
 
 ---
+## Letter distribution of the plain text
+```js
+//Letter distribution in the plaintext 
+  const { counts, total } = letterCounts(testo);
+  
+
+  let distributionOutput = 'Letter distribution (count):\n\n';
+  for (let i = 0; i < 26; i++) {
+    const letter = String.fromCharCode(65 + i); // A to Z
+    const count = counts[i];
+    
+    if (count > 0) {
+      distributionOutput += `${letter}: ${count} occurrence(s)\n`;
+    }
+  }
+
+```
+
+This code snippet uses the letterCounts function (defined later) to get the counts and total number of letters (A–Z) in the plaintext. It then builds a string listing each letter with its number of occurrences, including only those letters that appear at least once, effectively summarizing the absolute letter frequency distribution in the text.
 
 ##  Overview of the Caesar Cipher
 
@@ -547,6 +584,7 @@ The implemented code illustrates three essential concepts in classical cryptogra
 3. **Frequency-based statistical decryption**
 
 This exercise connects cryptographic theory with **distribution analysis**, showing how statistical reasoning can uncover hidden information. The algorithm highlights the transition from classical to modern cryptanalysis — from guessing keys to understanding data distributions.
+
 
 
 
