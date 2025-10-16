@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Caesar Cipher Demo</title>
+</head>
+<body>
+
+<h2>Caesar Cipher Demo</h2>
+
+<form id="myForm">
+  <input type="text" id="plaintext" size="50" placeholder="Enter text here">
+  <input type="submit" value="Enter">
+</form>
+
+<script>
+// english frequencies A-Z
+const freqEn = {
+  A:8.17,B:1.49,C:2.78,D:4.25,E:12.70,F:2.23,
+  G:2.02,H:6.09,I:6.97,J:0.15,K:0.77,L:4.03,M:2.41,
+  N:6.75,O:7.51,P:1.93,Q:0.10,R:5.99,S:6.33,
+  T:9.06,U:2.76,V:0.98,W:2.36,X:0.15,Y:1.97,Z:0.07
+};
+
+// classic caesar cipher
+function caesar(str, shift) {
+  let result = '';
+  for (let i = 0; i < str.length; i++) {
+    let c = str[i];
+    if (c.match(/[a-z]/i)) {
+      let code = str.charCodeAt(i);
+      let base = (code >= 65 && code <= 90) ? 65 : 97;
+      result += String.fromCharCode(((code - base + shift) % 26) + base);
+    } else {
+      result += c;
+    }
+  }
+  return result;
+}
+
+// brute-force decode
+function cesareDecode(str, shift){
+  let out='';
+  for(const c of str){
+    if(c.match(/[A-Z]/i)){
+      const base = c===c.toUpperCase()?65:97;
+      out += String.fromCharCode((c.charCodeAt(0)-base-shift+26)%26+base);
+    } else out+=c;
+  }
+  return out;
+}
+
+function bruteForceDecode(text){
+  const results = [];
+  for(let shift=1; shift<26; shift++){
+    results.push({shift, text: cesareDecode(text, shift)});
+  }
+  return results;
+}
+
+// decode via distribution
+function onlyLetters(s){
+  return s.toUpperCase().replace(/[^A-Z]/g,'');
+}
+
+function letterCounts(s){
+  const counts = Array(26).fill(0);
+  const clean = onlyLetters(s);
+  for(const ch of clean) counts[ch.charCodeAt(0)-65]++;
+  return {counts, total: clean.length};
+}
+
+function freqPercent(counts, total){
+  return counts.map(c => total? c*100/total: 0);
+}
+
+function chiSquared(obsPerc, expectedPerc){
+  let chi = 0;
+  for(let i=0;i<26;i++){
+    const O = obsPerc[i], E = expectedPerc[i];
+    if(E>0) chi += ((O-E)*(O-E))/E;
+  }
+  return chi;
+}
+
+function autoDecode(text){
+  const {counts,total} = letterCounts(text);
+  if(total===0) return {text:'',shift:0};
+
+  const obsPerc = freqPercent(counts,total);
+  const expectedArr = Object.keys(freqEn).map(k=>freqEn[k]);
+
+  let bestShift=0, bestChi=Infinity;
+  for(let shift=0; shift<26; shift++){
+    const rotated = obsPerc.map((v,i)=>obsPerc[(i+shift)%26]);
+    const chi = chiSquared(rotated, expectedArr);
+    if(chi<bestChi){ bestChi=chi; bestShift=shift; }
+  }
+
+  return {text: cesareDecode(text,bestShift), shift: bestShift};
+}
+
+// Event listener form
+document.getElementById('myForm').addEventListener('submit', function(e){
+  e.preventDefault();
+
+  const testo = document.getElementById('plaintext').value;
+  if(!testo) return alert("Please enter some text!");
+
+  // Classic Caesar shift 3
+  const classicCipher = caesar(testo,3);
+
+  // Brute-force
+  const brute = bruteForceDecode(classicCipher);
+  let bruteOutput = '';
+  brute.forEach(r => bruteOutput += `Shift ${r.shift}:\n${r.text}\n\n`);
+
+  // Auto decode via distribution
+  const auto = autoDecode(classicCipher);
+
+  // multiple alterts to shows 
+  alert(`Plaintext:\n${testo}`);
+  alert(`Classic Caesar Cipher (shift 3):\n${classicCipher}`);
+  alert(`Brute-force (all shifts 1-25):\n${bruteOutput}`);
+  alert(`Auto-decoded via frequency:\nShift estimated: ${auto.shift}\n${auto.text}`);
+});
+</script>
+
+</body>
+</html>
