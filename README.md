@@ -17,4 +17,8 @@ Datasets and distribution, examples and many more
 RSA and many more
 [Homework 3](homework3/homework3.md)
 
+# Homework4
+Code demo of Bernoulli
+[Homework 4](homework4/homework4.md)
+
 
