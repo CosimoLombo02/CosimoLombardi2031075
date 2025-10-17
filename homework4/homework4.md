@@ -1,4 +1,6 @@
-# Convergence to Probability
+# CosimoLombardi2031075
+
+## Convergence to Probability
 
 In probability theory and statistics, the phrase **“converge to the probability”** does **not** refer to classical notions of convergence in analysis, such as the Weierstrass ε–δ definition for limits of functions. Instead, it refers to a **stochastic concept of convergence**, describing how sequences of random variables or empirical frequencies behave as the number of observations or trials increases.
 
