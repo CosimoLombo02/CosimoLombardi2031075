@@ -311,37 +311,30 @@ It uses small prime numbers and limited alphabets to show, in real time, how bru
 
 This document explains, line-by-line / block-by-block, the JavaScript code you posted for the RSA toy demo. For each part I show what the code does, which variables correspond to the standard RSA notation, and how the code implements the mathematical identities you included:
 
-By definition, the encryption of 
-M
-M is:
+By definition, the encryption of \(M\) is:
 
-C≡Me(modN)
-C≡M
-e
-(modN)
+\[
+C \equiv M^e \pmod{N}
+\]
 
-Recovery (decoding) uses the private exponent 
-d
-d (the modular inverse of 
-e
-e modulo 
-φ(N)
-φ(N)), and yields:
+Recovery (decoding) uses the private exponent \(d\) (the modular inverse of \(e\) modulo \(\phi(N)\)), and yields:
 
-M≡Cd(modN)
-M≡C
-d
-(modN)
+\[
+M \equiv C^d \pmod{N}
+\]
 
-The proof uses the identity 
-e⋅d=1+kφ(N)
-e⋅d=1+kφ(N) and Euler's theorem 
-Mφ(N)≡1(modN)
-M
-φ(N)
-≡1(modN) (when 
-gcd⁡(M,N)=1
-gcd(M,N)=1).
+The proof uses the identity:
+
+\[
+e \cdot d = 1 + k \phi(N)
+\]
+
+and Euler's theorem:
+
+\[
+M^{\phi(N)} \equiv 1 \pmod{N} \quad \text{(when } \gcd(M, N) = 1\text{)}.
+\]
+
 
  ```js
 function egcd(a, b) {
@@ -670,7 +663,7 @@ M \equiv C^d \pmod{N}
 
 and uses `d` computed earlier via `modInv(e, \phi(n))`.
 
-### 6. The mathematical identity in the code (explicit mapping)
+###  The mathematical identity in the code (explicit mapping)
 
 Your algebraic steps and the corresponding lines of code:
 
@@ -718,7 +711,7 @@ provided \(\gcd(M, N) = 1\).
 
 ---
 
-### 7. Where the “recovery by enumeration” fits in
+###  Where the “recovery by enumeration” fits in
 
 The demo illustrates two complementary ways to recover the plaintext integer `m` from `c`:
 
@@ -733,7 +726,7 @@ The demo illustrates two complementary ways to recover the plaintext integer `m`
 
 ---
 
-### 8. UX / performance features in the code and why they matter
+###  UX / performance features in the code and why they matter
 
 - **Batch processing:** candidates are tested in batches (`batchSize`) to avoid blocking the UI.  
 - **Progress bar, tried/remaining counters:** improve visibility during long enumerations.  
@@ -742,7 +735,7 @@ The demo illustrates two complementary ways to recover the plaintext integer `m`
 
 ---
 
-### 9. Limitations and recommended improvements (short list)
+###  Limitations and recommended improvements (short list)
 
 - **No padding / insecure mapping:** real RSA uses padding schemes (OAEP) to avoid deterministic recovery; the demo uses raw integer encoding for pedagogy only.  
 - **No gcd check:** consider checking `gcd(m, n) === 1` for theoretical clarity.  
@@ -752,7 +745,7 @@ The demo illustrates two complementary ways to recover the plaintext integer `m`
 
 ---
 
-### 10. Short final summary
+###  Short final summary
 
 The demo implements the textbook RSA mapping \( m \mapsto c = m^e \mod n \) and computes the private exponent \( d = e^{-1} \mod \phi(n) \) using the extended Euclidean algorithm. It demonstrates the algebraic fact that  
 
