@@ -528,27 +528,27 @@ d = modInv(e, phi); // compute private exponent (throws if no inverse)
 - `p`, `q` → prime inputs from UI.
 
 - `n` corresponds to:  
-  \[
+   ` \[
   N = p \cdot q
-  \]
+  \]`
 
 - `phi` corresponds to:  
-  \[
+  `\[
   \phi(N) = (p - 1)(q - 1)
-  \]
+  \]`
 
 - `e` is chosen as `17` in the demo (a small, odd public exponent).
 
 - `d = modInv(e, phi)` computes `d` satisfying:  
-  \[
+  `\[
   e \cdot d \equiv 1 \pmod{\phi(N)}
-  \]  
+  \]` 
   This is exactly the step that produces the private key used in the mathematical proof.
 
 - Convert plaintext to integer `m` and check:  
-  \[
+ ` \[
   m < N
-  \]
+  \]`
 
 ```js
 let m = bigintFromString(msg);
@@ -561,13 +561,13 @@ const c = modPow(m, e, n);
 alert(`Ciphertext (numeric):\n${c}`);
 ```
 `c` is the ciphertext integer:  
-\[
+`\[
 c \equiv m^e \pmod{n}
-\]  
+\] ` 
 This implements the formula in your statement:  
-\[
+`\[
 C \equiv M^e \pmod{N}
-\]
+\]`
 
 ```js
 let cand = generateCandidates(alph, maxL, 1_000_000);
@@ -587,44 +587,44 @@ for each candidate s in next batch:
 ```
 For a candidate string `s`, the code computes its integer big (`candidate m'`) and its encryption  
 
-\[
+`\[
 \text{enc} = (m')^e \bmod n
-\]
+\]`
 
 If `enc === c`, then `m'` is a match and we recovered the plaintext by checking the forward encryption equation:  
 
-\[
+`\[
 (m')^e \equiv c \pmod{n}
-\]
+\]`
 
 Thus:  
 
-\[
+`\[
 m' = m
-\]  
+\]  `
 (assuming the mapping to integers is unique and no collisions occur).
 
 **Relation to the algebraic derivation**
 
 The test `enc === c` checks the forward definition:  
 
-\[
+`\[
 C \equiv M^e \pmod{N}
-\]  
+\]  `
 
 If we find `m'` such that  
 
-\[
+`\[
 (m')^e \equiv C
-\]  
+\] ` 
 
 then `m'` is the correct `m`.
 
 Alternatively, the demo also computes  
 
-\[
+`\[
 \text{stringFromBigint}(\text{modPow}(c, d, n))
-\]  
+\]  `
 
 as a final verification of the private-key decryption.
 
@@ -634,9 +634,9 @@ const plain = stringFromBigint(modPow(c, d, n));
 ```
 This implements the algebraic identity:  
 
-\[
+`\[
 M \equiv C^d \pmod{N}
-\]
+\]`
 
 and uses `d` computed earlier via `modInv(e, \phi(n))`.
 
@@ -646,25 +646,25 @@ Your algebraic steps and the corresponding lines of code:
 
 **Encryption definition**
 
-\[
+`\[
 C \equiv M^e \pmod{N}
-\]
+\]`
 
 → `const c = modPow(m, e, n);`
 
 **Compute private exponent**
 
-\[
+`\[
 d \equiv e^{-1} \pmod{\phi(N)}
-\]
+\]`
 
 → `const d = modInv(e, phi);`
 
 **Decryption / recovery with private key**
 
-\[
+`\[
 M \equiv C^d \pmod{N}
-\]
+\]`
 
 → `const plain = stringFromBigint(modPow(c, d, n));`
 
@@ -672,17 +672,17 @@ M \equiv C^d \pmod{N}
 
 The code relies on the correctness of modular inverses and modular exponentiation. It does not symbolically manipulate  
 
-\[
+`\[
 e \cdot d = 1 + k \phi(N)
-\]  
+\]  `
 
 but the correctness of `d` (from `modInv`) and the validity of `modPow(c, d, n)` rest on exactly that identity and Euler’s theorem:
 
-\[
+`\[
 M^{ed} = M^{1 + k \phi(N)} = M \cdot (M^{\phi(N)})^k \equiv M \cdot 1^k \equiv M \pmod{N},
-\]
+\]`
 
-provided \(\gcd(M, N) = 1\).
+provided `\(\gcd(M, N) = 1\).`
 
 **Important subtlety:** Euler’s theorem requires \(\gcd(M, N) = 1\). The demo does not explicitly check `gcd(m, n) === 1`; with small toy messages and small primes it typically holds, but if your message integer shares a factor with `n` there are edge cases (e.g., `m` divisible by `p` or `q`) where the simple Euler argument breaks down. Nevertheless, `C^d mod N` implemented with modular arithmetic still returns the correct original `m` in standard RSA because of the Chinese Remainder Theorem properties—but those are more advanced corner cases.
 
@@ -693,7 +693,7 @@ provided \(\gcd(M, N) = 1\).
 The demo illustrates two complementary ways to recover the plaintext integer `m` from `c`:
 
 1. **Direct decryption using the private key:**  
-   \( m = c^d \mod n \) (the algebraic/legitimate way). The code computes `d` and shows this result as verification.
+   `\( m = c^d \mod n \)` (the algebraic/legitimate way). The code computes `d` and shows this result as verification.
 
 2. **Brute-force / guided enumeration:**  
    Enumerate candidate strings `s`, map to `m' = encode(s)`, compute \((m')^e \mod n\), and check equality with `c`. If equal, we recovered `M` without using the private key — only possible here because `n` is tiny and the candidate space is small.  
@@ -726,9 +726,9 @@ The demo illustrates two complementary ways to recover the plaintext integer `m`
 
 The demo implements the textbook RSA mapping \( m \mapsto c = m^e \mod n \) and computes the private exponent \( d = e^{-1} \mod \phi(n) \) using the extended Euclidean algorithm. It demonstrates the algebraic fact that  
 
-\[
+`\[
 m = c^d \mod n
-\]  
+\]  `
 
 while also showing an attack route: enumerating possible messages, converting them into integers, encrypting them with the public key, and checking against the observed ciphertext.  
 
