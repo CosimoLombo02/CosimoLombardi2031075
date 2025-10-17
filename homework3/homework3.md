@@ -81,7 +81,7 @@ It uses small prime numbers and limited alphabets to show, in real time, how bru
     .meta { display:flex; gap:12px; margin-top:8px; font-size:13px; color:var(--muted); }
     .footer { margin-top:18px; font-size:13px; color:var(--muted); }
   </style>
-</head>
+
 <body>
   <div class="container">
     <div class="card">
