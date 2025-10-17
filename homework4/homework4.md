@@ -505,9 +505,218 @@ document.getElementById('clear').addEventListener('click', () => {
 // initialize example
 document.getElementById('info').textContent = 'Ready. Set parameters and click Run.';
 </script>
+</body>
 
 
 
 
 # Code and explanation
 ![Code of the demo](./carbon(1).png)
+
+
+
+This part of the document provides a detailed, research-style explanation of the HTML/JavaScript code for simulating Bernoulli trajectories, plotting their cumulative successes, and visualizing the Gaussian approximation via the Central Limit Theorem (CLT). The goal is to interpret the code as a formal study in stochastic processes and computational statistics.
+
+---
+
+##  Overview
+
+The application simulates **repeated Bernoulli trials**, where each trial results in "success" with probability `p` or "failure" with probability `1-p`. For a given number of trials `N` and paths `paths`, the program:
+
+1. Generates multiple independent sample paths of cumulative successes.
+2. Plots trajectories of cumulative successes vs trial number.
+3. Computes and plots the histogram of final successes.
+4. Overlays a Gaussian curve approximating the distribution of final successes (CLT).
+
+This structure allows users to visually explore how empirical distributions converge to theoretical predictions.
+
+---
+
+##  Simulation of Bernoulli Trials
+
+### Random Bernoulli Generator
+
+```js
+function randBernoulli(p) {
+  return Math.random() < p ? 1 : 0;
+}
+```
+
+* Simulates a single Bernoulli trial.
+* Returns `1` for success, `0` for failure.
+* Fundamental for stochastic path generation.
+
+### Path Simulation
+
+```js
+function simulateOnePath(){
+  const seq = new Array(N+1);
+  let cum = 0;
+  seq[0] = 0;
+  for(let t=1; t<=N; t++){
+    cum += randBernoulli(p);
+    seq[t] = cum;
+  }
+  return seq;
+}
+```
+
+* Generates **cumulative successes** for `N` trials.
+* Stores sequence in `seq`.
+* Enables trajectory plotting.
+
+> Each trajectory represents a **stochastic path** of successes, demonstrating variance in outcomes even with identical probabilities.
+
+---
+
+##  Visualization and Canvas Utilities
+
+### Canvas Setup
+
+```js
+function resizeCanvas(){
+  const cssW = canvas.clientWidth;
+  const cssH = 420;
+  const ratio = window.devicePixelRatio || 1;
+  canvas.width = Math.floor(cssW * ratio);
+  canvas.height = Math.floor(cssH * ratio);
+  ctx.setTransform(ratio,0,0,ratio,0,0);
+}
+```
+
+* Ensures high-resolution rendering for modern displays.
+* Maintains aspect ratio and clarity when resizing.
+
+### Axes and Grid
+
+```js
+function drawAxes(margins, N, maxY){
+  // Draw horizontal and vertical grids
+  // Add axis labels and tick marks
+}
+```
+
+* Provides **visual context** for trajectories and histograms.
+* Labels the axes: `Tries →` and `Successes →`.
+* Includes y-ticks and x-ticks for interpretation.
+
+---
+
+##  Plotting Trajectories
+
+```js
+function drawPath(seq, colorAlpha=0.12){
+  ctx.beginPath();
+  ctx.strokeStyle = `rgba(20,110,230,${colorAlpha})`;
+  ctx.moveTo(map.x(0), map.y(seq[0]));
+  for(let t=1; t<=N; t++){
+    ctx.lineTo(map.x(t), map.y(seq[t]));
+  }
+  ctx.stroke();
+}
+```
+
+* Draws each path with transparency for visual clarity.
+* **Mean line** is plotted separately as `y = t * p`, representing expected cumulative successes.
+
+```js
+ctx.strokeStyle = 'rgba(20,110,230,1)';
+ctx.lineWidth = 2;
+ctx.beginPath();
+ctx.moveTo(map.x(0), map.y(0));
+for(let t=0; t<=N; t++){
+  ctx.lineTo(map.x(t), map.y(t * p));
+}
+ctx.stroke();
+```
+
+> This illustrates **expected vs realized outcomes** in Bernoulli processes.
+
+---
+
+##  Histogram of Final Successes
+
+```js
+const bins = new Array(N+1).fill(0);
+for(const v of finals) bins[v]++;
+```
+
+* Aggregates the final success counts from all paths.
+* Represents the **empirical distribution** of the number of successes.
+
+```js
+ctx.fillStyle = 'rgba(220,40,40,0.9)';
+ctx.fillRect(centerX - binWidthPx*0.4, barTopY, binWidthPx*0.8, barH);
+```
+
+* Draws histogram bars proportional to frequency.
+* Red bars highlight the distribution of terminal outcomes.
+
+---
+
+##  Gaussian Approximation (CLT)
+
+```js
+function gaussianPdf(x, mu, sigma){
+  return Math.exp(-0.5*((x-mu)/sigma)**2) / (Math.sqrt(2*Math.PI)*sigma);
+}
+```
+
+* Evaluates the Gaussian PDF for overlay.
+* Parameters:
+
+  * `mu = N * p` (expected successes)
+  * `sigma = sqrt(N * p * (1-p))` (standard deviation)
+
+```js
+for(let k=0; k<=N; k++){
+  const pdfVal = gaussianPdf(k, mu, sigma);
+  const expectedCount = pdfVal * paths;
+  theoCounts[k] = expectedCount;
+}
+```
+
+* Approximates the expected frequency of each final success count.
+* Drawn as a green curve overlaying the histogram.
+
+> Demonstrates **convergence of empirical distribution to theoretical CLT prediction**.
+
+---
+
+##  User Interaction
+
+* **Inputs:** Number of trials (`N`), number of paths, success probability (`p`), animation toggle, batch delay.
+* **Run button:** Initiates simulation and visualization.
+* **Clear button:** Resets the canvas.
+
+```js
+document.getElementById('run').addEventListener('click', async () => {
+  await runSimulation({ N, paths, p, animate, delay });
+});
+```
+
+> Allows real-time experimentation with stochastic behavior and CLT convergence.
+
+---
+
+##  Research Significance
+
+* **Stochastic trajectories:** Illustrate variability in repeated Bernoulli experiments.
+* **Histogram vs Gaussian:** Demonstrates **law of large numbers** and **CLT** in practice.
+* **Interactive simulation:** Enables empirical validation of probabilistic theory.
+* **Educational utility:** Bridges theory (probability) and computation (simulation and visualization).
+
+This framework could support a **university-level study** on empirical probability distributions, convergence properties, and statistical approximation methods.
+
+---
+
+##  Conclusion
+
+The code provides a comprehensive tool to:
+
+1. Simulate stochastic Bernoulli trials.
+2. Visualize both individual trajectories and aggregate distributions.
+3. Empirically demonstrate the **convergence of sample statistics** to theoretical expectations.
+
+By integrating JavaScript simulations with dynamic visualizations, this implementation becomes a powerful educational and research platform for **probability theory and statistical learning**.
+
