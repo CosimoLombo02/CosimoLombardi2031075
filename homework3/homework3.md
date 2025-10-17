@@ -306,5 +306,8 @@ It uses small prime numbers and limited alphabets to show, in real time, how bru
   </script>
 </body>
 
+# Code and explanation
+![Code of the demo](./carbon.png)
+
 
 
