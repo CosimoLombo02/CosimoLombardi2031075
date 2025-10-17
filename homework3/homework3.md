@@ -514,7 +514,7 @@ function generateCandidates(alph, maxLen, cap=500000){
 - **Exhaustive enumeration grows exponentially**: \(|\text{alphabet}|^{\text{maxLen}}\). The demo enforces small alphabet sizes and short maximum lengths to keep the computation feasible.  
 - **Sorting by the reference distribution** implements a **prioritized search**: candidates that are more likely to be English are tested first, increasing the efficiency of the recovery process.
 
-### 5. Main UI flow and cryptographic steps (event handler)
+###  Main UI flow and cryptographic steps (event handler)
 ```js
 const p = BigInt(primeP.value);
 const q = BigInt(primeQ.value);
