@@ -343,5 +343,206 @@ M
 gcd⁡(M,N)=1
 gcd(M,N)=1).
 
+ ```js
+function egcd(a, b) {
+  if (b === 0n) return [a, 1n, 0n];
+  const [g, x1, y1] = egcd(b, a % b);
+  return [g, y1, x1 - (a / b) * y1];
+}
+function modInv(a, m) {
+  const [g, x] = egcd(a, m);
+  if (g !== 1n) throw new Error('No modular inverse');
+  return (x % m + m) % m;
+}
+function modPow(base, exp, mod) {
+  base %= mod;
+  let res = 1n;
+  while (exp > 0n) {
+    if (exp & 1n) res = (res * base) % mod;
+    base = (base * base) % mod;
+    exp >>= 1n;
+  }
+  return res;
+}
+
+ ```
+### What They Do
+
+- **`egcd(a, b)`** — Implements the **Extended Euclidean Algorithm** for BigInt.  
+  Returns `[g, x, y]` where `g = gcd(a, b)` and satisfies the equation:
+  \[
+  a \cdot x + b \cdot y = g
+  \]
+
+- **`modInv(a, m)`** — Computes the **modular inverse** \( a^{-1} \bmod m \) using `egcd`.  
+  This directly corresponds to finding \( d \) such that:
+  \[
+  d = e^{-1} \bmod \varphi(n)
+  \]
+
+- **`modPow(base, exp, mod)`** — Performs **fast modular exponentiation** (square-and-multiply).  
+  It efficiently computes:
+  \[
+  m^{e} \bmod n \quad \text{and} \quad c^{d} \bmod n
+  \]
+
+---
+
+### RSA Mapping
+
+- `modInv(e, phi)` → computes \( d \) such that:
+  \[
+  e \cdot d \equiv 1 \pmod{\varphi(n)}
+  \]
+
+- `modPow(m, e, n)` → computes the **ciphertext** \( c \) from plaintext \( m \):
+  \[
+  c \equiv m^{e} \pmod{n}
+  \]
+
+- `modPow(c, d, n)` → computes the **decrypted plaintext** \( m \) from ciphertext \( c \):
+  \[
+  m \equiv c^{d} \pmod{n}
+  \]
+
+---
+
+### Relation to the Algebraic Derivation
+
+The correctness of  
+\[
+m = c^{d} \bmod N
+\]
+relies on the fact that  
+\[
+e \cdot d \equiv 1 \pmod{\varphi(N)}
+\]  
+and on **Euler’s Theorem** (or equivalently the **Chinese Remainder Theorem**) which ensures that:
+\[
+M^{\varphi(N)} \equiv 1 \pmod{N}
+\]
+for any \( M \) coprime to \( N \).  
+This guarantees that decrypting with \( d \) perfectly reverses encryption with \( e \).
+
+```js
+function bigintFromString(s) {
+  let x = 0n;
+  for (const ch of s) {
+    const code = ch.charCodeAt(0);
+    if (code > 255) throw new Error('ASCII only.');
+    x = (x << 8n) + BigInt(code);
+  }
+  return x;
+}
+function stringFromBigint(x) {
+  const bytes = [];
+  while (x > 0n) {
+    bytes.unshift(Number(x & 0xFFn));
+    x >>= 8n;
+  }
+  return String.fromCharCode(...bytes);
+}
+
+```
+#### What They Do
+
+- **`bigintFromString(s)`** — Converts an ASCII string into a single **BigInt** value.  
+  It processes each character, takes its ASCII code, and concatenates the bytes in base-256 form:  
+  \[
+  m = \text{BigInt}(\text{concat}(\text{ASCII bytes of } s))
+  \]  
+  This produces the integer representation \( m \) of the plaintext message.
+
+- **`stringFromBigint(x)`** — Performs the **inverse operation**.  
+  It takes a BigInt, extracts its bytes (base-256 digits), and converts them back to characters, reconstructing the original ASCII string.
+
+---
+
+### RSA Mapping
+
+- `m = bigintFromString(M)` → converts the **plaintext message** \( M \) into its integer form, which must satisfy  
+  \[
+  0 < m < n
+  \]
+  before encryption.
+
+- `stringFromBigint(modPow(c, d, n))` → converts the **decrypted integer** back into a readable string \( M \), completing the RSA decryption cycle.
+
+---
+
+### Key Concept
+
+In RSA, encryption and decryption operate on **integers**, not text.  
+These two helper functions act as a bridge between human-readable messages and the numerical domain where modular arithmetic is applied.
+
+```js
+const freq = { 'a': 0.08167, /* ... */ ' ': 0.13 };
+function score(s){
+  let sc = 0;
+  for(const c of s.toLowerCase()){
+    sc += Math.log(freq[c] || 0.0001);
+  }
+  return sc;
+}
+
+```
+### English Reference Distribution & Scoring
+
+### What This Does
+
+- `freq` contains **unigram frequencies** for letters (a–z) and a high probability for space `' '`.  
+- `score(s)` computes the **sum of log-probabilities** (log-likelihood) of the characters in the string `s`:  
+  \[
+  \text{score}(s) = \sum_{c \in s} \log P(c)
+  \]  
+  The `|| 0.0001` floor prevents \(-\infty\) when a character is not in the table.
+
+---
+
+### Why It’s Used
+
+- The demo **prioritizes candidate plaintexts** that look like English: candidates with higher log-likelihood are tried first.  
+- This implements the **reference distribution** concept: candidate strings are ranked according to their likelihood under English, guiding the search efficiently rather than using purely lexicographic order.
+
+---
+
+### Relation to the Derivation
+
+- The scoring mechanism is **not part of RSA mathematics**.  
+- It is a **heuristic** to help the recovery routine find likely `m` faster in small toy examples.  
+- It complements the algebraic identity \(M \equiv C^d \pmod{N}\) by making the **enumeration practical** for educational demonstrations.
+
+```js
+function generateCandidates(alph, maxLen, cap=500000){
+  const out=[];
+  const L=alph.length;
+  for(let len=1; len<=maxLen; len++){
+    const idx=Array(len).fill(0);
+    while(true){
+      out.push(idx.map(i=>alph[i]).join(''));
+      // increment logic...
+      if(out.length>cap) return out;
+    }
+  }
+  return out;
+}
+
+```
+### Candidate Generation and Prioritization
+
+### What This Does
+
+- The function **enumerates all strings** over `alph` for lengths 1..`maxLen`.  
+- Enumeration **stops early** if a maximum `cap` of candidates is reached.  
+- After generating candidates, the code **computes scores** for each string (using the English reference distribution) and **sorts them in descending order** so that the highest-likelihood (most English-like) candidates come first.
+
+---
+
+### Why This Matters
+
+- **Exhaustive enumeration grows exponentially**: \(|\text{alphabet}|^{\text{maxLen}}\). The demo enforces small alphabet sizes and short maximum lengths to keep the computation feasible.  
+- **Sorting by the reference distribution** implements a **prioritized search**: candidates that are more likely to be English are tested first, increasing the efficiency of the recovery process.
+  
+
 
 
