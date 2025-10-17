@@ -309,11 +309,11 @@ It uses small prime numbers and limited alphabets to show, in real time, how bru
 # Code and explanation
 ![Code of the demo](./carbon.png)
 
-This document explains, line-by-line / block-by-block, the JavaScript code you posted for the RSA toy demo. For each part I show what the code does, which variables correspond to the standard RSA notation, and how the code implements the mathematical identities you included:
-By definition, the encryption of `M` is `C ≡ M^e (mod N)`. Recovery (decoding) uses the private exponent `d` (the modular inverse of `e` modulo `φ(N)`), and yields `M ≡ C^d (mod N)`. The proof uses the identity `e ⋅ d = 1 + k φ(N)` and Euler's theorem `M^φ(N) ≡ 1 (mod N)` (when `gcd(M, N) = 1`).
+This document explains, line-by-line / block-by-block, the JavaScript code for the RSA toy demo. For each part, it shows what the code does, which variables correspond to standard RSA notation, and how the code implements the mathematical identities.
 
+By definition, the encryption of `M` is `C = M^e mod N`. Recovery uses the private exponent `d` (the modular inverse of `e` modulo φ(N)), and yields `M = C^d mod N`. The proof uses the identity `e * d = 1 + k * φ(N)` and Euler's theorem `M^φ(N) = 1 mod N` (when gcd(M, N) = 1).
 
- ```js
+```js
 function egcd(a, b) {
   if (b === 0n) return [a, 1n, 0n];
   const [g, x1, y1] = egcd(b, a % b);
@@ -334,65 +334,23 @@ function modPow(base, exp, mod) {
   }
   return res;
 }
+```
 
- ```
 ### What They Do
 
-- **`egcd(a, b)`** — Implements the **Extended Euclidean Algorithm** for BigInt.  
-  Returns `[g, x, y]` where `g = gcd(a, b)` and satisfies the equation:
-  \[
-  a \cdot x + b \cdot y = g
-  \]
-
-- **`modInv(a, m)`** — Computes the **modular inverse** \( a^{-1} \bmod m \) using `egcd`.  
-  This directly corresponds to finding \( d \) such that:
-  \[
-  d = e^{-1} \bmod \varphi(n)
-  \]
-
-- **`modPow(base, exp, mod)`** — Performs **fast modular exponentiation** (square-and-multiply).  
-  It efficiently computes:
-  \[
-  m^{e} \bmod n \quad \text{and} \quad c^{d} \bmod n
-  \]
-
----
+- **`egcd(a, b)`** — Extended Euclidean Algorithm for BigInt. Returns `[g, x, y] where `g = gcd(a, b)` and satisfies `a*x + b*y = g`.
+- **`modInv(a, m)`** — Computes modular inverse of `a` modulo `m` using `egcd`. Finds `d` such that `d = e^-1 mod φ(n)`.
+- **`modPow(base, exp, mod)`** — Fast modular exponentiation. Computes `m^e mod n` and `c^d mod n` efficiently.
 
 ### RSA Mapping
 
-- `modInv(e, phi)` → computes \( d \) such that:
-  \[
-  e \cdot d \equiv 1 \pmod{\varphi(n)}
-  \]
-
-- `modPow(m, e, n)` → computes the **ciphertext** \( c \) from plaintext \( m \):
-  \[
-  c \equiv m^{e} \pmod{n}
-  \]
-
-- `modPow(c, d, n)` → computes the **decrypted plaintext** \( m \) from ciphertext \( c \):
-  \[
-  m \equiv c^{d} \pmod{n}
-  \]
-
----
+- `modInv(e, phi)` → computes `d` such that `e * d = 1 mod φ(n)`.
+- `modPow(m, e, n)` → computes ciphertext `c = m^e mod n`.
+- `modPow(c, d, n)` → computes decrypted plaintext `m = c^d mod n`.
 
 ### Relation to the Algebraic Derivation
 
-The correctness of  
-\[
-m = c^{d} \bmod N
-\]
-relies on the fact that  
-\[
-e \cdot d \equiv 1 \pmod{\varphi(N)}
-\]  
-and on **Euler’s Theorem** (or equivalently the **Chinese Remainder Theorem**) which ensures that:
-\[
-M^{\varphi(N)} \equiv 1 \pmod{N}
-\]
-for any \( M \) coprime to \( N \).  
-This guarantees that decrypting with \( d \) perfectly reverses encryption with \( e \).
+The correctness of `m = c^d mod N` relies on `e * d = 1 mod φ(N)` and Euler’s Theorem, ensuring that `M^φ(N) = 1 mod N` for any M coprime to N. This guarantees decryption with `d` reverses encryption with `e`.
 
 ```js
 function bigintFromString(s) {
@@ -412,39 +370,20 @@ function stringFromBigint(x) {
   }
   return String.fromCharCode(...bytes);
 }
-
 ```
-#### What They Do
 
-- **`bigintFromString(s)`** — Converts an ASCII string into a single **BigInt** value.  
-  It processes each character, takes its ASCII code, and concatenates the bytes in base-256 form:  
-  \[
-  m = \text{BigInt}(\text{concat}(\text{ASCII bytes of } s))
-  \]  
-  This produces the integer representation \( m \) of the plaintext message.
+### What They Do
 
-- **`stringFromBigint(x)`** — Performs the **inverse operation**.  
-  It takes a BigInt, extracts its bytes (base-256 digits), and converts them back to characters, reconstructing the original ASCII string.
-
----
+- `bigintFromString(s)` — Converts an ASCII string into a BigInt by concatenating bytes.
+- `stringFromBigint(x)` — Converts a BigInt back to an ASCII string.
 
 ### RSA Mapping
 
-- `m = bigintFromString(M)` → converts the **plaintext message** \( M \) into its integer form, which must satisfy  
-  \[
-  0 < m < n
-  \]
-  before encryption.
+- `m = bigintFromString(M)` → plaintext integer `0 < m < n`.
+- `stringFromBigint(modPow(c, d, n))` → converts decrypted integer back to string.
 
-- `stringFromBigint(modPow(c, d, n))` → converts the **decrypted integer** back into a readable string \( M \), completing the RSA decryption cycle.
-
----
-
-### Key Concept
-
-In RSA, encryption and decryption operate on **integers**, not text.  
-These two helper functions act as a bridge between human-readable messages and the numerical domain where modular arithmetic is applied.
 ### English Reference Distribution & Scoring
+
 ```js
 const freq = { 'a': 0.08167, /* ... */ ' ': 0.13 };
 function score(s){
@@ -454,35 +393,13 @@ function score(s){
   }
   return sc;
 }
-
 ```
 
-
-### What This Does
-
-- `freq` contains **unigram frequencies** for letters (a–z) and a high probability for space `' '`.  
-- `score(s)` computes the **sum of log-probabilities** (log-likelihood) of the characters in the string `s`:  
-  \[
-  \text{score}(s) = \sum_{c \in s} \log P(c)
-  \]  
-  The `|| 0.0001` floor prevents \(-\infty\) when a character is not in the table.
-
----
-
-### Why It’s Used
-
-- The demo **prioritizes candidate plaintexts** that look like English: candidates with higher log-likelihood are tried first.  
-- This implements the **reference distribution** concept: candidate strings are ranked according to their likelihood under English, guiding the search efficiently rather than using purely lexicographic order.
-
----
-
-### Relation to the Derivation
-
-- The scoring mechanism is **not part of RSA mathematics**.  
-- It is a **heuristic** to help the recovery routine find likely `m` faster in small toy examples.  
-- It complements the algebraic identity \(M \equiv C^d \pmod{N}\) by making the **enumeration practical** for educational demonstrations.
+- `score(s)` computes sum of log-probabilities of characters in `s`.
+- Used to prioritize candidate plaintexts that are more English-like.
 
 ### Candidate Generation and Prioritization
+
 ```js
 function generateCandidates(alph, maxLen, cap=500000){
   const out=[];
@@ -491,30 +408,19 @@ function generateCandidates(alph, maxLen, cap=500000){
     const idx=Array(len).fill(0);
     while(true){
       out.push(idx.map(i=>alph[i]).join(''));
-      // increment logic...
       if(out.length>cap) return out;
     }
   }
   return out;
 }
-
 ```
 
+- Enumerates all strings over `alph` up to `maxLen`.
+- Stops at a maximum `cap`.
+- Computes scores and sorts candidates by likelihood.
 
-### What This Does
+### Main UI flow and cryptographic steps
 
-- The function **enumerates all strings** over `alph` for lengths 1..`maxLen`.  
-- Enumeration **stops early** if a maximum `cap` of candidates is reached.  
-- After generating candidates, the code **computes scores** for each string (using the English reference distribution) and **sorts them in descending order** so that the highest-likelihood (most English-like) candidates come first.
-
----
-
-### Why This Matters
-
-- **Exhaustive enumeration grows exponentially**: \(|\text{alphabet}|^{\text{maxLen}}\). The demo enforces small alphabet sizes and short maximum lengths to keep the computation feasible.  
-- **Sorting by the reference distribution** implements a **prioritized search**: candidates that are more likely to be English are tested first, increasing the efficiency of the recovery process.
-
-###  Main UI flow and cryptographic steps (event handler)
 ```js
 const p = BigInt(primeP.value);
 const q = BigInt(primeQ.value);
@@ -522,60 +428,32 @@ const n = p*q;
 const phi = (p-1n)*(q-1n);
 const e = 17n;
 let d;
-d = modInv(e, phi); // compute private exponent (throws if no inverse)
-
+d = modInv(e, phi);
 ```
+
 - `p`, `q` → prime inputs from UI.
-
-- `n` corresponds to:  
-   ` \[
-  N = p \cdot q
-  \]`
-
-- `phi` corresponds to:  
-  `\[
-  \phi(N) = (p - 1)(q - 1)
-  \]`
-
-- `e` is chosen as `17` in the demo (a small, odd public exponent).
-
-- `d = modInv(e, phi)` computes `d` satisfying:  
-  `\[
-  e \cdot d \equiv 1 \pmod{\phi(N)}
-  \]` 
-  This is exactly the step that produces the private key used in the mathematical proof.
-
-- Convert plaintext to integer `m` and check:  
- ` \[
-  m < N
-  \]`
+- `n = p * q`
+- `phi = (p-1)*(q-1)`
+- `d = modInv(e, phi)` computes `d` such that `e * d = 1 mod φ(n)`.
+- Convert plaintext to integer `m` and check `m < n`.
 
 ```js
 let m = bigintFromString(msg);
-if (m >= n) { alert('Plaintext integer >= modulus n. ...'); return; }
-
-```
-This enforces the textbook requirement that the integer encoded plaintext is less than the modulus.
-```js
+if (m >= n) { alert('Plaintext integer >= modulus n.'); return; }
 const c = modPow(m, e, n);
 alert(`Ciphertext (numeric):\n${c}`);
 ```
-`c` is the ciphertext integer:  
-`\[
-c \equiv m^e \pmod{n}
-\] ` 
-This implements the formula in your statement:  
-`\[
-C \equiv M^e \pmod{N}
-\]`
+
+- `c` is ciphertext integer `c = m^e mod n`.
+- Forward encryption formula: `C = M^e mod N`.
 
 ```js
 let cand = generateCandidates(alph, maxL, 1_000_000);
 const scored = cand.map(s=>({s,sc:score(s)}));
 scored.sort((a,b)=>b.sc-a.sc);
-
 ```
-`scored` is the sorted candidate list by likelihood under the reference distribution.
+
+- `scored` is sorted candidate list by likelihood.
 
 ```js
 for each candidate s in next batch:
@@ -583,168 +461,46 @@ for each candidate s in next batch:
   if (big >= n) continue;
   enc = modPow(big, e, n);
   if (enc === c) { found = s; break; }
-
 ```
-For a candidate string `s`, the code computes its integer big (`candidate m'`) and its encryption  
 
-`\[
-\text{enc} = (m')^e \bmod n
-\]`
-
-If `enc === c`, then `m'` is a match and we recovered the plaintext by checking the forward encryption equation:  
-
-`\[
-(m')^e \equiv c \pmod{n}
-\]`
-
-Thus:  
-
-`\[
-m' = m
-\]  `
-(assuming the mapping to integers is unique and no collisions occur).
-
-**Relation to the algebraic derivation**
-
-The test `enc === c` checks the forward definition:  
-
-`\[
-C \equiv M^e \pmod{N}
-\]  `
-
-If we find `m'` such that  
-
-`\[
-(m')^e \equiv C
-\] ` 
-
-then `m'` is the correct `m`.
-
-Alternatively, the demo also computes  
-
-`\[
-\text{stringFromBigint}(\text{modPow}(c, d, n))
-\]  `
-
-as a final verification of the private-key decryption.
+- Computes `m'` for candidate `s` and its encryption `enc = m'^e mod n`.
+- If `enc === c`, then `m' = m` (plaintext recovered).
 
 ```js
 const plain = stringFromBigint(modPow(c, d, n));
-
 ```
-This implements the algebraic identity:  
 
-`\[
-M \equiv C^d \pmod{N}
-\]`
+- Verifies algebraic identity: `M = C^d mod N`.
 
-and uses `d` computed earlier via `modInv(e, \phi(n))`.
+### The mathematical identity in the code
 
-###  The mathematical identity in the code (explicit mapping)
+- Encryption: `C = M^e mod N` → `const c = modPow(m, e, n);`
+- Compute private exponent: `d = e^-1 mod φ(N)` → `const d = modInv(e, phi);`
+- Decryption: `M = C^d mod N` → `const plain = stringFromBigint(modPow(c, d, n));`
 
-Your algebraic steps and the corresponding lines of code:
+- Proof relies on `e * d = 1 + k*φ(N)` and Euler’s theorem ensuring `M^φ(N) = 1 mod N` for gcd(M, N) = 1.
 
-**Encryption definition**
+### Recovery by Enumeration
 
-`\[
-C \equiv M^e \pmod{N}
-\]`
+- Direct decryption: `m = c^d mod n`
+- Brute-force / guided: enumerate `s`, map to `m'`, compute `m'^e mod n`, check `m'^e == c`.
+- Sorting by English likelihood prioritizes probable candidates.
 
-→ `const c = modPow(m, e, n);`
+### UX / Performance Features
 
-**Compute private exponent**
+- Batch processing (`batchSize`)
+- Progress bar, counters
+- Candidate cap
+- ASCII-only encoding
 
-`\[
-d \equiv e^{-1} \pmod{\phi(N)}
-\]`
+### Limitations and Improvements
 
-→ `const d = modInv(e, phi);`
+- No padding / insecure mapping
+- No gcd check
+- Better language models (bigrams/trigrams)
+- On-the-fly generation (priority queue / beam search)
+- Web Workers
 
-**Decryption / recovery with private key**
+### Summary
 
-`\[
-M \equiv C^d \pmod{N}
-\]`
-
-→ `const plain = stringFromBigint(modPow(c, d, n));`
-
-**Proof steps used implicitly by code**
-
-The code relies on the correctness of modular inverses and modular exponentiation. It does not symbolically manipulate  
-
-`\[
-e \cdot d = 1 + k \phi(N)
-\]  `
-
-but the correctness of `d` (from `modInv`) and the validity of `modPow(c, d, n)` rest on exactly that identity and Euler’s theorem:
-
-`\[
-M^{ed} = M^{1 + k \phi(N)} = M \cdot (M^{\phi(N)})^k \equiv M \cdot 1^k \equiv M \pmod{N},
-\]`
-
-provided `\(\gcd(M, N) = 1\).`
-
-**Important subtlety:** Euler’s theorem requires \(\gcd(M, N) = 1\). The demo does not explicitly check `gcd(m, n) === 1`; with small toy messages and small primes it typically holds, but if your message integer shares a factor with `n` there are edge cases (e.g., `m` divisible by `p` or `q`) where the simple Euler argument breaks down. Nevertheless, `C^d mod N` implemented with modular arithmetic still returns the correct original `m` in standard RSA because of the Chinese Remainder Theorem properties—but those are more advanced corner cases.
-
----
-
-###  Where the “recovery by enumeration” fits in
-
-The demo illustrates two complementary ways to recover the plaintext integer `m` from `c`:
-
-1. **Direct decryption using the private key:**  
-   `\( m = c^d \mod n \)` (the algebraic/legitimate way). The code computes `d` and shows this result as verification.
-
-2. **Brute-force / guided enumeration:**  
-   Enumerate candidate strings `s`, map to `m' = encode(s)`, compute \((m')^e \mod n\), and check equality with `c`. If equal, we recovered `M` without using the private key — only possible here because `n` is tiny and the candidate space is small.  
-   The code optimizes this brute force by sorting candidate strings by `score(s)` from the reference distribution (English unigram frequencies), so likely plaintexts are attempted first.
-
-**Takeaway:** The enumeration method demonstrates how an attacker could recover short plaintexts if the message space is small. The algebraic decryption \(c^d \mod n\) is the canonical (and efficient) method when the private key `d` is known. The demo uses both to illustrate the relationship between algebraic RSA correctness proofs and a practical (toy) attack.
-
----
-
-###  UX / performance features in the code and why they matter
-
-- **Batch processing:** candidates are tested in batches (`batchSize`) to avoid blocking the UI.  
-- **Progress bar, tried/remaining counters:** improve visibility during long enumerations.  
-- **Cap on candidate generation:** prevents memory blow-up for large alphabets / lengths.  
-- **ASCII only:** the encoding uses 1 byte per character (code ≤ 255) to keep the encoding simple.
-
----
-
-###  Limitations and recommended improvements (short list)
-
-- **No padding / insecure mapping:** real RSA uses padding schemes (OAEP) to avoid deterministic recovery; the demo uses raw integer encoding for pedagogy only.  
-- **No gcd check:** consider checking `gcd(m, n) === 1` for theoretical clarity.  
-- **Better language model:** replace unigram scoring with bigrams, trigrams, or a statistical language model to improve guided search.  
-- **On-the-fly generation:** instead of generating and sorting millions of candidates, use a priority queue / beam search to produce highest-likelihood candidates lazily.  
-- **Web Workers:** move heavy computation off the main thread to keep UI responsive.
-
----
-
-###  Short final summary
-
-The demo implements the textbook RSA mapping \( m \mapsto c = m^e \mod n \) and computes the private exponent \( d = e^{-1} \mod \phi(n) \) using the extended Euclidean algorithm. It demonstrates the algebraic fact that  
-
-`\[
-m = c^d \mod n
-\]  `
-
-while also showing an attack route: enumerating possible messages, converting them into integers, encrypting them with the public key, and checking against the observed ciphertext.  
-
-The enumeration is made practical in this toy setting by ranking candidates using an English reference distribution (log-likelihood score). The code therefore connects the theoretical RSA correctness (Euler’s theorem and the inverse exponent) with a concrete demonstration of why small message spaces and small moduli are insecure.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+The demo implements textbook RSA mapping `m -> c = m^e mod n` and computes private exponent `d = e^-1 mod φ(n)`. It shows `m = c^d mod n` and illustrates an attack via enumeration of likely plaintexts.
