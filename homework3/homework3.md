@@ -310,30 +310,7 @@ It uses small prime numbers and limited alphabets to show, in real time, how bru
 ![Code of the demo](./carbon.png)
 
 This document explains, line-by-line / block-by-block, the JavaScript code you posted for the RSA toy demo. For each part I show what the code does, which variables correspond to the standard RSA notation, and how the code implements the mathematical identities you included:
-
-By definition, the encryption of \(M\) is:
-
-\[
-C \equiv M^e \pmod{N}
-\]
-
-Recovery (decoding) uses the private exponent \(d\) (the modular inverse of \(e\) modulo \(\phi(N)\)), and yields:
-
-\[
-M \equiv C^d \pmod{N}
-\]
-
-The proof uses the identity:
-
-\[
-e \cdot d = 1 + k \phi(N)
-\]
-
-and Euler's theorem:
-
-\[
-M^{\phi(N)} \equiv 1 \pmod{N} \quad \text{(when } \gcd(M, N) = 1\text{)}.
-\]
+By definition, the encryption of `M` is `C ≡ M^e (mod N)`. Recovery (decoding) uses the private exponent `d` (the modular inverse of `e` modulo `φ(N)`), and yields `M ≡ C^d (mod N)`. The proof uses the identity `e ⋅ d = 1 + k φ(N)` and Euler's theorem `M^φ(N) ≡ 1 (mod N)` (when `gcd(M, N) = 1`).
 
 
  ```js
