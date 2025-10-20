@@ -199,7 +199,7 @@ Use the controls above to explore how the probability `p` affects the distributi
   .legend div { display:flex; align-items:center; gap:6px; font-size:13px; }
   .swatch { width:18px; height:8px; border-radius:3px; display:inline-block; }
 </style>
-</head>
+
 <body>
   <div class="card">
     <h1>Bernoulli Trajectories — "Number of successes" vs "Number of tries"</h1>
