@@ -176,14 +176,7 @@ This interactive demo simulates multiple sample paths of repeated Bernoulli tria
 - Demonstrates the **law of large numbers**: trajectories tend to approach the expected mean as the number of trials increases.
 - Illustrates the **Central Limit Theorem**: distribution of final successes approximates a Gaussian with mean `N*p` and variance `N*p*(1-p)`.
 
-## Notes
-
-- Trajectories are cumulative counts of successes.
-- The histogram scales relative to the highest bin.
-- Gaussian overlay is scaled to match the histogram for visual comparison.
-- ASCII and browser-safe implementation with high-DPI canvas support.
-
-Use the controls above to explore how the probability `p` affects the distribution of successes, the convergence of paths, and the CLT approximation.
+## Demo
 
 <head>
 <meta charset="utf-8" />
@@ -512,8 +505,9 @@ document.getElementById('info').textContent = 'Ready. Set parameters and click R
 
 
 
-# Code and explanation
-![Code of the demo](./carbon(1).png)
+
+
+
 
 
 
