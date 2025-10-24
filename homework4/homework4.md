@@ -178,9 +178,13 @@ This interactive demo simulates multiple sample paths of repeated Bernoulli tria
 
 ## Demo
 
+
+
+
+
 <head>
 <meta charset="utf-8" />
-<title>LLN — Bernoulli Frequencies (f(n) = S_n / n)</title>
+<title>Demo</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <style>
   body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial; background:#f7fbff; color:#0b2445; padding:20px; }
@@ -199,8 +203,8 @@ This interactive demo simulates multiple sample paths of repeated Bernoulli tria
 </head>
 <body>
   <div class="card">
-    <h1>Legge dei Grandi Numeri — Frequenze relative f(n) = S<sub>n</sub>/n</h1>
-    <p class="meta">Simula più traiettorie di prove Bernoulli(p) e mostra come le frequenze relative finali si concentrano intorno a p. Istogramma verticale sulla destra.</p>
+    <h1>Demo<sub>n</sub>/n</h1>
+    <p class="meta">Demo</p>
 
     <div class="row">
       <label>Trials (N)</label>
@@ -223,21 +227,16 @@ This interactive demo simulates multiple sample paths of repeated Bernoulli tria
     <canvas id="plot"></canvas>
 
     <div class="legend">
-      <div><span class="swatch" style="background:rgba(20,110,230,0.18)"></span> traiettorie f(t) (leggere)</div>
-      <div><span class="swatch" style="background:rgba(20,110,230,1)"></span> linea media teorica (y = p)</div>
-      <div><span class="swatch" style="background:rgba(220,40,40,0.9)"></span> istogramma di f(N)</div>
+      <div><span class="swatch" style="background:rgba(20,110,230,0.18)"></span> trajectories f(t) (leggere)</div>
+      <div><span class="swatch" style="background:rgba(20,110,230,1)"></span> theoretical average (y = p)</div>
+      <div><span class="swatch" style="background:rgba(220,40,40,0.9)"></span> historgram of f(N)</div>
     </div>
 
     <div class="meta" id="info"></div>
   </div>
 
 <script>
-/* ----------------------------------------------------------
-   Modificato per visualizzare la Legge dei Grandi Numeri (LLN)
-   - Traiettorie di frequenze relative f(t) = S_t / t (y in [0,1])
-   - Linea orizzontale y = p
-   - Istogramma verticale sulla destra per f(N)
-   ---------------------------------------------------------- */
+
 
 // helpers
 function randBernoulli(p){ return Math.random() < p ? 1 : 0; }
