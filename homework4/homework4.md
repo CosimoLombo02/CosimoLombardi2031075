@@ -1,58 +1,58 @@
 # CosimoLombardi2031075
-##  Theoretical Background
+## Theoretical Background
 
-## Bernoulli Trials
+### Bernoulli Trials
 
 A **Bernoulli trial** is a random experiment with exactly two possible outcomes:
-- *Success* (denoted by 1) with probability \( p \),
-- *Failure* (denoted by 0) with probability \( 1 - p \).
+- *Success* (denoted by 1) with probability $p$,
+- *Failure* (denoted by 0) with probability $1 - p$.
 
-Let \( X_1, X_2, \dots, X_n \) be independent Bernoulli random variables, each with the same success probability \( p \).  
+Let $X_1, X_2, \dots, X_n$ be independent Bernoulli random variables, each with the same success probability $p$.  
 Then the random sum
-\[
+$$
 S_n = \sum_{i=1}^{n} X_i
-\]
-represents the **total number of successes** after \( n \) trials.
+$$
+represents the **total number of successes** after $n$ trials.
 
-## Relative Frequency and the Law of Large Numbers (LLN)
+### Relative Frequency and the Law of Large Numbers (LLN)
 
-The **relative frequency** of successes after \( n \) trials is defined as
-\[
+The **relative frequency** of successes after $n$ trials is defined as
+$$
 f_n = \frac{S_n}{n} = \frac{1}{n} \sum_{i=1}^{n} X_i.
-\]
+$$
 
-The **Law of Large Numbers (LLN)** states that as \( n \to \infty \),
-\[
+The **Law of Large Numbers (LLN)** states that, as $n \to \infty$,
+$$
 f_n \xrightarrow{P} p,
-\]
-that is, the empirical mean \( f_n \) converges in probability to the theoretical success probability \( p \).
+$$
+i.e., the empirical mean $f_n$ converges in probability to the theoretical success probability $p$.
 
-Intuitively, as we repeat the experiment many times, the fraction of successes observed stabilizes around the true value \( p \).
+Intuitively, as we repeat the experiment many times, the fraction of successes observed stabilizes around the true value $p$.
 
-## Connection to the Central Limit Theorem (CLT)
+### Connection to the Central Limit Theorem (CLT)
 
-Although the LLN describes convergence in probability, it does not specify how *fast* the convergence happens.  
+Although the LLN describes convergence in probability, it does not specify how *fast* this convergence happens.  
 The **Central Limit Theorem (CLT)** states that
-\[
-\frac{S_n - np}{\sqrt{n p (1-p)}} \Rightarrow \mathcal{N}(0, 1)
-\]
-as \( n \to \infty \).
+$$
+\frac{S_n - n p}{\sqrt{n p (1-p)}} \;\; \Rightarrow \;\; \mathcal{N}(0, 1) \quad \text{as } n \to \infty.
+$$
 
-This implies that fluctuations of \( f_n \) around \( p \) scale as
-\[
+This implies that fluctuations of $f_n$ around $p$ scale as
+$$
 f_n \approx p + \mathcal{O}\left(\frac{1}{\sqrt{n}}\right),
-\]
-so the variance of \( f_n \) decreases as \( 1/n \).
+$$
+so the variance of $f_n$ decreases as $1/n$.
 
-## Empirical Distribution and Convergence Visualization
+### Empirical Distribution and Convergence Visualization
 
-When simulating many independent trajectories of \( f_n \), we can empirically observe the LLN as follows:
+When simulating many independent trajectories of $f_n$, we can empirically observe the LLN:
 
-- For small \( n \), the trajectories are noisy and vary significantly across realizations.  
-- As \( n \) increases, the trajectories cluster around \( y = p \).  
-- The histogram of the final values \( f_N \) (after \( N \) trials) becomes increasingly concentrated near \( p \).
+- For small $n$, the trajectories are noisy and vary significantly across realizations.  
+- As $n$ increases, the trajectories cluster around $y = p$.  
+- The histogram of the final values $f_N$ (after $N$ trials) becomes increasingly concentrated near $p$.
 
 This visualization provides both qualitative and quantitative evidence of the Law of Large Numbers.
+
 
 
 
