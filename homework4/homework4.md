@@ -1,186 +1,74 @@
 # CosimoLombardi2031075
+##  Theoretical Background
 
-## Convergence to Probability
+## Bernoulli Trials
 
-In probability theory and statistics, the phrase **“converge to the probability”** does **not** refer to classical notions of convergence in analysis, such as the Weierstrass ε–δ definition for limits of functions. Instead, it refers to a **stochastic concept of convergence**, describing how sequences of random variables or empirical frequencies behave as the number of observations or trials increases.
+A **Bernoulli trial** is a random experiment with exactly two possible outcomes:
+- *Success* (denoted by 1) with probability \( p \),
+- *Failure* (denoted by 0) with probability \( 1 - p \).
 
-This concept is central in understanding why long-run empirical measurements approximate theoretical probabilities, and it forms the basis for much of statistical inference.
+Let \( X_1, X_2, \dots, X_n \) be independent Bernoulli random variables, each with the same success probability \( p \).  
+Then the random sum
+\[
+S_n = \sum_{i=1}^{n} X_i
+\]
+represents the **total number of successes** after \( n \) trials.
 
----
+## Relative Frequency and the Law of Large Numbers (LLN)
 
-##  Intuitive Meaning
+The **relative frequency** of successes after \( n \) trials is defined as
+\[
+f_n = \frac{S_n}{n} = \frac{1}{n} \sum_{i=1}^{n} X_i.
+\]
 
-To “converge to the probability” generally means that as we repeat a **random experiment** many times:
+The **Law of Large Numbers (LLN)** states that as \( n \to \infty \),
+\[
+f_n \xrightarrow{P} p,
+\]
+that is, the empirical mean \( f_n \) converges in probability to the theoretical success probability \( p \).
 
-- The **empirical frequency** (the proportion of times an event occurs) approaches the **theoretical probability** of that event.
-- In other words, the average outcome over many trials stabilizes around the expected probability.
+Intuitively, as we repeat the experiment many times, the fraction of successes observed stabilizes around the true value \( p \).
 
-### Example: Coin Toss
+## Connection to the Central Limit Theorem (CLT)
 
-- Let us flip a fair coin repeatedly.
-- Define a sequence of indicator random variables X1, X2, ..., Xn such that:
+Although the LLN describes convergence in probability, it does not specify how *fast* the convergence happens.  
+The **Central Limit Theorem (CLT)** states that
+\[
+\frac{S_n - np}{\sqrt{n p (1-p)}} \Rightarrow \mathcal{N}(0, 1)
+\]
+as \( n \to \infty \).
 
-```
-X_i = 1 if the i-th toss is heads
-X_i = 0 if the i-th toss is tails
-```
+This implies that fluctuations of \( f_n \) around \( p \) scale as
+\[
+f_n \approx p + \mathcal{O}\left(\frac{1}{\sqrt{n}}\right),
+\]
+so the variance of \( f_n \) decreases as \( 1/n \).
 
-- The probability of heads is:
+## Empirical Distribution and Convergence Visualization
 
-```
-P(X_i = 1) = 0.5
-```
+When simulating many independent trajectories of \( f_n \), we can empirically observe the LLN as follows:
 
-- Define the **sample average** after n tosses:
+- For small \( n \), the trajectories are noisy and vary significantly across realizations.  
+- As \( n \) increases, the trajectories cluster around \( y = p \).  
+- The histogram of the final values \( f_N \) (after \( N \) trials) becomes increasingly concentrated near \( p \).
 
-```
-S_n = (X_1 + X_2 + ... + X_n) / n
-```
+This visualization provides both qualitative and quantitative evidence of the Law of Large Numbers.
 
-- The law of large numbers states:
 
-```
-S_n → 0.5 as n → ∞
-```
 
-- Here, “→ 0.5” is **convergence in probability** (or almost surely, depending on the form of the law of large numbers), meaning the observed proportion of heads will stabilize near 0.5 as the number of tosses grows.
 
----
 
-##  Formal Notions of Probabilistic Convergence
 
-Unlike classical convergence in analysis, there are **several types of convergence for random variables**:
 
-###  Convergence in Probability
 
-A sequence of random variables Xn **converges in probability** to a constant p if, for every ε > 0:
 
-```
-P(|X_n - p| > ε) → 0 as n → ∞
-```
 
-- Intuition: The probability that Xn deviates significantly from p goes to zero as n increases.
-- Example: Sn (sample average of coin tosses) converges in probability to 0.5.
 
-###  Almost Sure Convergence
 
-A sequence Xn **converges almost surely** to p if:
 
-```
-P(lim_{n→∞} X_n = p) = 1
-```
 
-- This is a stronger notion: with probability 1, the sequence of outcomes eventually stays arbitrarily close to p.
-
-###  Convergence in Distribution
-
-A sequence Xn **converges in distribution** to a random variable X if the cumulative distribution functions F_{Xn}(x) converge to F_X(x) at all continuity points of F_X.
-
-- This is weaker than almost sure convergence and convergence in probability.
-- Often used for limiting distributions (e.g., central limit theorem).
-
----
-
-##  Relation to the Law of Large Numbers (LLN)
-
-The statement that a sequence of trials **converges to the probability** is formalized by the **law of large numbers**:
-
-###  Weak Law of Large Numbers
-
-- Let X1, X2, ..., Xn be independent and identically distributed (i.i.d.) random variables with expected value μ = E[Xi].
-- Then the sample average:
-
-```
-S_n = (X_1 + X_2 + ... + X_n) / n
-```
-
-**converges in probability** to μ:
-
-```
-S_n → μ as n → ∞
-```
-
-###  Strong Law of Large Numbers
-
-- Under the same assumptions, the sample average **converges almost surely** to μ:
-
-```
-P(lim_{n→∞} S_n = μ) = 1
-```
-
-- This guarantees that in a single infinite sequence of trials, the relative frequency will settle at the true probability.
-
----
-
-##  Key Differences from Classical Convergence
-
-| Classical Convergence | Convergence to Probability |
-|---------------------|---------------------------|
-| Sequence of numbers | Sequence of random variables |
-| Limit defined via ε–δ neighborhoods | Limit defined via probabilistic statements (e.g., P(|X_n - p| > ε) → 0) |
-| Deterministic | Stochastic / random |
-| Example: f(x) → L as x → a | Example: sample average S_n → true probability p as n → ∞ |
-
-- Classical convergence is deterministic and precise; probabilistic convergence deals with tendencies over repeated trials.
-
----
-
-##  Practical Implications
-
-- In simulations or experiments, “converging to probability” explains why **empirical frequencies approximate theoretical probabilities**.
-- This concept is crucial in:
-  - Monte Carlo methods
-  - Statistical estimation
-  - Predictive modeling
-- It also underlies the idea that **probabilities are long-run relative frequencies**.
-
----
-
-##  Summary
-
-- **Convergence to probability** refers to the stabilization of observed outcomes (frequencies, averages) around the theoretical probability as the number of trials grows.
-- It is **probabilistic**, not classical, convergence.
-- It is formalized through concepts such as **convergence in probability** and **almost sure convergence** and is central to the **law of large numbers**.
-- This convergence justifies why probabilities measured empirically in repeated experiments are reliable estimates of theoretical probabilities.
-
-# Demo
-# Bernoulli Trajectories Demo
-
-This interactive demo simulates multiple sample paths of repeated Bernoulli trials. Each path represents a sequence of successes over a fixed number of trials, with a given probability `p` of success. The demo visualizes both the trajectories and the distribution of final successes.
-
-## Features
-
-- **Trajectories**: Shows the cumulative number of successes for each simulated path.
-- **Mean line**: Displays the expected number of successes over trials (`N * p`).
-- **Final successes histogram**: Empirical distribution of successes at the end of all paths.
-- **Gaussian overlay**: CLT approximation of the final success distribution.
-
-## User Controls
-
-- **Trials (N)**: Number of Bernoulli trials per path.
-- **Paths**: Number of sample paths to simulate.
-- **p (success probability)**: Probability of success in each trial.
-- **Animate**: Toggle animation to show trajectories in real time.
-- **Batch delay**: Delay in milliseconds between animation batches.
-
-## How It Works
-
-1. **Generate Paths**: For each path, simulate `N` Bernoulli trials with probability `p` and compute cumulative successes.
-2. **Draw Trajectories**: Plot each path with light blue lines to visualize randomness.
-3. **Plot Mean Line**: Overlay the theoretical expected successes (`t * p`) as a solid blue line.
-4. **Compute Histogram**: Count final successes across all paths and display as red bars.
-5. **Overlay Gaussian**: Use the Central Limit Theorem to overlay a green Gaussian curve approximating the histogram.
-
-## Educational Purpose
-
-- Demonstrates the **law of large numbers**: trajectories tend to approach the expected mean as the number of trials increases.
-- Illustrates the **Central Limit Theorem**: distribution of final successes approximates a Gaussian with mean `N*p` and variance `N*p*(1-p)`.
 
 ## Demo
-
-
-
-
 
 <head>
 <meta charset="utf-8" />
@@ -227,7 +115,7 @@ This interactive demo simulates multiple sample paths of repeated Bernoulli tria
     <canvas id="plot"></canvas>
 
     <div class="legend">
-      <div><span class="swatch" style="background:rgba(20,110,230,0.18)"></span> trajectories f(t) (leggere)</div>
+      <div><span class="swatch" style="background:rgba(20,110,230,0.18)"></span> trajectories f(t) </div>
       <div><span class="swatch" style="background:rgba(20,110,230,1)"></span> theoretical average (y = p)</div>
       <div><span class="swatch" style="background:rgba(220,40,40,0.9)"></span> historgram of f(N)</div>
     </div>
@@ -501,217 +389,178 @@ document.getElementById('info').textContent = 'Ready. Set parameters and click R
 </script>
 </body>
 
+##  Simulation of the Law of Large Numbers
 
+We simulate the LLN by generating multiple **trajectories** of Bernoulli trials and plotting their **relative frequencies** over time.
 
+## Conceptual Overview
 
-
-
-
-
-
-
-This part of the document provides a detailed, research-style explanation of the HTML/JavaScript code for simulating Bernoulli trajectories, plotting their cumulative successes, and visualizing the Gaussian approximation via the Central Limit Theorem (CLT). The goal is to interpret the code as a formal study in stochastic processes and computational statistics.
-
----
-
-##  Overview
-
-The application simulates **repeated Bernoulli trials**, where each trial results in "success" with probability `p` or "failure" with probability `1-p`. For a given number of trials `N` and paths `paths`, the program:
-
-1. Generates multiple independent sample paths of cumulative successes.
-2. Plots trajectories of cumulative successes vs trial number.
-3. Computes and plots the histogram of final successes.
-4. Overlays a Gaussian curve approximating the distribution of final successes (CLT).
-
-This structure allows users to visually explore how empirical distributions converge to theoretical predictions.
+1. Generate \( m \) independent trajectories, each consisting of \( n \) Bernoulli trials.
+2. For each trajectory:
+   - Compute the cumulative sum of successes \( S_t \) at trial \( t \).
+   - Compute the relative frequency \( f_t = S_t / t \) at each step.
+3. Plot all trajectories simultaneously to visualize convergence.
+4. At the final trial \( n \), compute a histogram of the \( f_n \) values across all trajectories.
+5. Overlay the theoretical probability \( p \) to illustrate the LLN.
 
 ---
 
-##  Simulation of Bernoulli Trials
+## Detailed Code Explanation
 
-### Random Bernoulli Generator
+The simulation is implemented in **JavaScript** with an interactive HTML interface. Below is a step-by-step explanation of the key components.
+
+## Bernoulli Random Generator
 
 ```js
 function randBernoulli(p) {
-  return Math.random() < p ? 1 : 0;
+    return Math.random() < p ? 1 : 0;
 }
 ```
 
-* Simulates a single Bernoulli trial.
-* Returns `1` for success, `0` for failure.
-* Fundamental for stochastic path generation.
-
-### Path Simulation
-
-```js
-function simulateOnePath(){
-  const seq = new Array(N+1);
-  let cum = 0;
-  seq[0] = 0;
-  for(let t=1; t<=N; t++){
-    cum += randBernoulli(p);
-    seq[t] = cum;
-  }
-  return seq;
-}
-```
-
-* Generates **cumulative successes** for `N` trials.
-* Stores sequence in `seq`.
-* Enables trajectory plotting.
-
-> Each trajectory represents a **stochastic path** of successes, demonstrating variance in outcomes even with identical probabilities.
+- Generates a single Bernoulli outcome (1 for success, 0 for failure).
+- Uses `Math.random()` which returns a uniform value in [0,1).
+- Compares with `p` to determine success or failure.
 
 ---
 
-##  Visualization and Canvas Utilities
-
-### Canvas Setup
+## Simulation of a Single Trajectory
 
 ```js
-function resizeCanvas(){
-  const cssW = canvas.clientWidth;
-  const cssH = 420;
-  const ratio = window.devicePixelRatio || 1;
-  canvas.width = Math.floor(cssW * ratio);
-  canvas.height = Math.floor(cssH * ratio);
-  ctx.setTransform(ratio,0,0,ratio,0,0);
+function simulateOnePath(N, p) {
+    let seq = new Array(N + 1);
+    let cum = 0;
+    seq[0] = 0; // zero successes at trial 0
+    for (let t = 1; t <= N; t++) {
+        cum += randBernoulli(p);
+        seq[t] = cum / t; // relative frequency at trial t
+    }
+    return seq;
 }
 ```
 
-* Ensures high-resolution rendering for modern displays.
-* Maintains aspect ratio and clarity when resizing.
+**Explanation:**
 
-### Axes and Grid
-
-```js
-function drawAxes(margins, N, maxY){
-  // Draw horizontal and vertical grids
-  // Add axis labels and tick marks
-}
-```
-
-* Provides **visual context** for trajectories and histograms.
-* Labels the axes: `Tries →` and `Successes →`.
-* Includes y-ticks and x-ticks for interpretation.
+1. `seq` stores the relative frequency \( f_t \) at each trial.
+2. `cum` keeps the cumulative number of successes.
+3. Loop from `t = 1` to `N`:
+   - Draw a Bernoulli outcome and add to `cum`.
+   - Compute `f_t = cum / t` for the current trial.
+4. Returns an array representing the trajectory of relative frequencies.
 
 ---
 
-##  Plotting Trajectories
+## Generating Multiple Trajectories
 
 ```js
-function drawPath(seq, colorAlpha=0.12){
-  ctx.beginPath();
-  ctx.strokeStyle = `rgba(20,110,230,${colorAlpha})`;
-  ctx.moveTo(map.x(0), map.y(seq[0]));
-  for(let t=1; t<=N; t++){
-    ctx.lineTo(map.x(t), map.y(seq[t]));
-  }
-  ctx.stroke();
+let allTrajectories = [];
+for (let i = 0; i < paths; i++) {
+    allTrajectories.push(simulateOnePath(N, p));
 }
 ```
 
-* Draws each path with transparency for visual clarity.
-* **Mean line** is plotted separately as `y = t * p`, representing expected cumulative successes.
-
-```js
-ctx.strokeStyle = 'rgba(20,110,230,1)';
-ctx.lineWidth = 2;
-ctx.beginPath();
-ctx.moveTo(map.x(0), map.y(0));
-for(let t=0; t<=N; t++){
-  ctx.lineTo(map.x(t), map.y(t * p));
-}
-ctx.stroke();
-```
-
-> This illustrates **expected vs realized outcomes** in Bernoulli processes.
+- `paths` = number of trajectories \( m \).
+- Each trajectory is stored as an array in `allTrajectories`.
+- Ensures independence between trajectories.
 
 ---
 
-##  Histogram of Final Successes
+## Plotting Trajectories
+
+**Coordinate mapping:**
 
 ```js
-const bins = new Array(N+1).fill(0);
-for(const v of finals) bins[v]++;
-```
-
-* Aggregates the final success counts from all paths.
-* Represents the **empirical distribution** of the number of successes.
-
-```js
-ctx.fillStyle = 'rgba(220,40,40,0.9)';
-ctx.fillRect(centerX - binWidthPx*0.4, barTopY, binWidthPx*0.8, barH);
-```
-
-* Draws histogram bars proportional to frequency.
-* Red bars highlight the distribution of terminal outcomes.
-
----
-
-##  Gaussian Approximation (CLT)
-
-```js
-function gaussianPdf(x, mu, sigma){
-  return Math.exp(-0.5*((x-mu)/sigma)**2) / (Math.sqrt(2*Math.PI)*sigma);
+function makeMapper(margins, N) {
+    const w = canvas.clientWidth, h = parseInt(canvas.style.height);
+    return {
+        x: x => margins.left + (w - margins.left - margins.right) * (x / N),
+        y: y => margins.top + (h - margins.top - margins.bottom) * (1 - y) // y in [0,1]
+    };
 }
 ```
 
-* Evaluates the Gaussian PDF for overlay.
-* Parameters:
+- Maps trial index `t` and relative frequency `f_t` to canvas coordinates.
+- Y-axis is inverted because canvas origin is top-left.
+- Ensures consistent scaling for all trajectories.
 
-  * `mu = N * p` (expected successes)
-  * `sigma = sqrt(N * p * (1-p))` (standard deviation)
+**Drawing each trajectory:**
 
 ```js
-for(let k=0; k<=N; k++){
-  const pdfVal = gaussianPdf(k, mu, sigma);
-  const expectedCount = pdfVal * paths;
-  theoCounts[k] = expectedCount;
+function drawPath(seq, colorAlpha=0.1){
+    ctx.beginPath();
+    ctx.strokeStyle = `rgba(20,110,230,${colorAlpha})`;
+    ctx.moveTo(map.x(0), map.y(seq[0]));
+    for(let t=1; t<=N; t++){
+        ctx.lineTo(map.x(t), map.y(seq[t]));
+    }
+    ctx.stroke();
 }
 ```
 
-* Approximates the expected frequency of each final success count.
-* Drawn as a green curve overlaying the histogram.
-
-> Demonstrates **convergence of empirical distribution to theoretical CLT prediction**.
+- Loops through the sequence of `f_t` values.
+- Uses semi-transparent blue lines to allow overlapping trajectories to show density visually.
 
 ---
 
-##  User Interaction
-
-* **Inputs:** Number of trials (`N`), number of paths, success probability (`p`), animation toggle, batch delay.
-* **Run button:** Initiates simulation and visualization.
-* **Clear button:** Resets the canvas.
+## Histogram of Final Relative Frequencies
 
 ```js
-document.getElementById('run').addEventListener('click', async () => {
-  await runSimulation({ N, paths, p, animate, delay });
+let finalFrequencies = allTrajectories.map(traj => traj[N]);
+
+let bins = new Array(binCount).fill(0);
+finalFrequencies.forEach(f => {
+    let index = Math.floor(f * binCount);
+    bins[index]++;
 });
 ```
 
-> Allows real-time experimentation with stochastic behavior and CLT convergence.
+- `finalFrequencies` stores \( f_N \) for each trajectory.
+- The histogram is computed by binning these values.
+- Allows visualization of empirical distribution convergence towards \( p \).
 
 ---
 
-##  Research Significance
+## Overlay of Theoretical Probability \( p \)
 
-* **Stochastic trajectories:** Illustrate variability in repeated Bernoulli experiments.
-* **Histogram vs Gaussian:** Demonstrates **law of large numbers** and **CLT** in practice.
-* **Interactive simulation:** Enables empirical validation of probabilistic theory.
-* **Educational utility:** Bridges theory (probability) and computation (simulation and visualization).
-
-This framework could support a **university-level study** on empirical probability distributions, convergence properties, and statistical approximation methods.
+- A horizontal line at `y = p` is drawn across the canvas.
+- Shows the convergence of trajectories and the histogram toward the theoretical success probability.
 
 ---
 
-##  Conclusion
+## Animation and Interaction
 
-The code provides a comprehensive tool to:
+- Trajectories can be drawn **incrementally** in batches to create an animated effect.
+- Uses `await new Promise(r => setTimeout(r, delay))` to allow visualization of convergence over time without freezing the UI.
 
-1. Simulate stochastic Bernoulli trials.
-2. Visualize both individual trajectories and aggregate distributions.
-3. Empirically demonstrate the **convergence of sample statistics** to theoretical expectations.
+---
 
-By integrating JavaScript simulations with dynamic visualizations, this implementation becomes a powerful educational and research platform for **probability theory and statistical learning**.
+##  Statistical Output
+
+After simulation, the following statistics are displayed:
+
+- Empirical mean of \( f_N \) across all trajectories.
+- Standard deviation \( \sigma = \sqrt{p(1-p)/N} \).
+- Histogram of final relative frequencies compared with theoretical probability \( p \).
+
+These quantitatively verify the LLN and provide intuition about convergence rates.
+
+---
+
+##  Pedagogical Interpretation
+
+- **Trajectories:** initially noisy, but cluster around \( p \) as \( n \) grows.
+- **Histogram:** distribution of \( f_N \) becomes concentrated near \( p \) with increasing \( n \).
+- **LLN demonstration:** visually and quantitatively illustrates the stabilization of relative frequency with sample size.
+- **CLT insight:** variance of relative frequencies decreases as \( 1/N \).
+
+
+
+
+
+
+
+
+
+
+
+
 
