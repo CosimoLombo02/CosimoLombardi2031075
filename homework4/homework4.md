@@ -185,6 +185,10 @@ This interactive demo simulates multiple sample paths of repeated Bernoulli tria
 
 Use the controls above to explore how the probability `p` affects the distribution of successes, the convergence of paths, and the CLT approximation.
 
+<head>
+<meta charset="utf-8" />
+<title>LLN — Bernoulli Frequencies (f(n) = S_n / n)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <style>
   body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial; background:#f7fbff; color:#0b2445; padding:20px; }
   .card { background:#fff; border-radius:10px; padding:16px; box-shadow:0 6px 18px rgba(11,37,69,0.06); max-width:1100px; margin:0 auto; }
@@ -193,22 +197,22 @@ Use the controls above to explore how the probability `p` affects the distributi
   label { font-weight:600; font-size:13px; margin-right:6px; }
   input[type=number], input[type=range], select { padding:6px 8px; border-radius:8px; border:1px solid #e6eefc; }
   button { padding:8px 12px; border-radius:8px; border:0; background:#2563eb; color:white; font-weight:700; cursor:pointer; }
-  canvas { background: linear-gradient(180deg,#ffffff,#f1f7ff); border-radius:8px; display:block; margin-top:12px; width:100%; max-width:100%; height:420px; }
+  canvas { background: linear-gradient(180deg,#ffffff,#f1f7ff); border-radius:8px; display:block; margin-top:12px; width:100%; max-width:100%; height:520px; }
   .meta { font-size:13px; color:#446; margin-top:8px; }
   .legend { display:flex; gap:12px; margin-top:8px; flex-wrap:wrap; }
   .legend div { display:flex; align-items:center; gap:6px; font-size:13px; }
   .swatch { width:18px; height:8px; border-radius:3px; display:inline-block; }
 </style>
-
+</head>
 <body>
   <div class="card">
-    <h1>Bernoulli Trajectories — "Number of successes" vs "Number of tries"</h1>
-    <p class="meta">Simulate multiple sample paths of repeated Bernoulli trials (success prob <code>p</code>), plot trajectories (#successes over trials) and show the empirical final-success histogram with Gaussian (CLT) overlay.</p>
+    <h1>Legge dei Grandi Numeri — Frequenze relative f(n) = S<sub>n</sub>/n</h1>
+    <p class="meta">Simula più traiettorie di prove Bernoulli(p) e mostra come le frequenze relative finali si concentrano intorno a p. Istogramma verticale sulla destra.</p>
 
     <div class="row">
       <label>Trials (N)</label>
       <input id="N" type="number" min="1" max="2000" value="200" />
-      <label>Paths</label>
+      <label>Paths (m)</label>
       <input id="paths" type="number" min="1" max="2000" value="200" />
       <label>p (success prob)</label>
       <input id="pprob" type="number" min="0" max="1" step="0.01" value="0.5" />
@@ -226,39 +230,33 @@ Use the controls above to explore how the probability `p` affects the distributi
     <canvas id="plot"></canvas>
 
     <div class="legend">
-      <div><span class="swatch" style="background:rgba(20,110,230,0.18)"></span> trajectories (light)</div>
-      <div><span class="swatch" style="background:rgba(20,110,230,1)"></span> mean line (np)</div>
-      <div><span class="swatch" style="background:rgba(220,40,40,0.9)"></span> histogram (final successes)</div>
-      <div><span class="swatch" style="background:rgba(40,200,40,0.9)"></span> Gaussian overlay</div>
+      <div><span class="swatch" style="background:rgba(20,110,230,0.18)"></span> traiettorie f(t) (leggere)</div>
+      <div><span class="swatch" style="background:rgba(20,110,230,1)"></span> linea media teorica (y = p)</div>
+      <div><span class="swatch" style="background:rgba(220,40,40,0.9)"></span> istogramma di f(N)</div>
     </div>
 
     <div class="meta" id="info"></div>
   </div>
 
 <script>
-/*
-  Trajectories simulation and plot
-  - Generates 'paths' sample paths of length N with Bernoulli(p)
-  - Plots each trajectory: x=trial index (0..N), y=cumulative successes (0..N)
-  - Computes histogram of final successes across paths
-  - Overlays Gaussian (CLT) approx for final successes:
-      mean = N*p, variance = N*p*(1-p)
-  - Options: animate vs instant
-*/
+/* ----------------------------------------------------------
+   Modificato per visualizzare la Legge dei Grandi Numeri (LLN)
+   - Traiettorie di frequenze relative f(t) = S_t / t (y in [0,1])
+   - Linea orizzontale y = p
+   - Istogramma verticale sulla destra per f(N)
+   ---------------------------------------------------------- */
 
-// ---- helpers ----
+// helpers
 function randBernoulli(p){ return Math.random() < p ? 1 : 0; }
-function linspace(a,b,n){ const out=[]; if(n===1) return [a]; for(let i=0;i<n;i++) out.push(a + (b-a)*i/(n-1)); return out; }
 function gaussianPdf(x, mu, sigma){ return Math.exp(-0.5*((x-mu)/sigma)**2) / (Math.sqrt(2*Math.PI)*sigma); }
 
-// ---- canvas plotting utilities ----
+// canvas
 const canvas = document.getElementById('plot');
 const ctx = canvas.getContext('2d');
 
 function resizeCanvas(){
-  // make canvas high-res for crispness
   const cssW = canvas.clientWidth;
-  const cssH = 420;
+  const cssH = 520;
   const ratio = window.devicePixelRatio || 1;
   canvas.width = Math.floor(cssW * ratio);
   canvas.height = Math.floor(cssH * ratio);
@@ -272,116 +270,133 @@ function clearCanvas(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
 }
 
-// draw axes and grid
-function drawAxes(margins, N, maxY){
-  const w = canvas.clientWidth;
-  const h = parseInt(canvas.style.height);
+// layout: main plot area on left, histogram area on right
+function getLayout(){
+  const totalW = canvas.clientWidth;
+  const totalH = parseInt(canvas.style.height);
+  const histWidth = Math.min(220, Math.floor(totalW * 0.28)); // right panel for histogram
+  const mainWidth = totalW - histWidth - 18; // small gap
+  const margins = { left: 60, right: 12, top: 30, bottom: 60 };
+  const main = { x: 0, y: 0, w: mainWidth, h: totalH, margins };
+  const hist = { x: mainWidth + 18, y: 0, w: histWidth, h: totalH, margins: { left: 12, right: 12, top: 30, bottom: 60 } };
+  return { main, hist, totalW, totalH };
+}
+
+function drawMainAxes(main, N){
+  const w = main.w, h = main.h;
+  const m = main.margins;
   ctx.save();
+  // background grid
   ctx.strokeStyle = '#e6eefc';
   ctx.lineWidth = 1;
-  // grid lines (y)
   for(let i=0;i<=5;i++){
-    const yy = margins.top + (h - margins.top - margins.bottom) * i/5;
+    const yy = m.top + (h - m.top - m.bottom) * i/5;
     ctx.beginPath();
-    ctx.moveTo(margins.left, yy);
-    ctx.lineTo(w - margins.right, yy);
+    ctx.moveTo(m.left, yy);
+    ctx.lineTo(m.left + (w - m.left - m.right), yy);
     ctx.stroke();
   }
   // axes
   ctx.strokeStyle = '#a9c2f7';
   ctx.lineWidth = 1.2;
   ctx.beginPath();
-  ctx.moveTo(margins.left, margins.top);
-  ctx.lineTo(margins.left, h - margins.bottom);
-  ctx.lineTo(w - margins.right, h - margins.bottom);
+  ctx.moveTo(m.left, m.top);
+  ctx.lineTo(m.left, h - m.bottom);
+  ctx.lineTo(m.left + (w - m.left - m.right), h - m.bottom);
   ctx.stroke();
-  // labels
+
   ctx.fillStyle = '#38506b';
   ctx.font = '12px system-ui';
-  ctx.fillText('Tries →', w - margins.right - 40, h - margins.bottom + 18);
-  ctx.fillText('Successes →', margins.left - 68, margins.top + 10);
-  // y ticks
+  ctx.fillText('Tries →', m.left + (w - m.left - m.right) - 40, h - m.bottom + 18);
+  ctx.fillText('Relative freq →', m.left - 58, m.top + 10);
+
+  // y ticks: 0..1
   for(let i=0;i<=5;i++){
-    const val = Math.round(maxY * (1 - i/5));
-    const yy = margins.top + (h - margins.top - margins.bottom) * i/5;
-    ctx.fillText(String(val), margins.left - 38, yy + 4);
+    const val = (1 - i/5).toFixed(2);
+    const yy = m.top + (h - m.top - m.bottom) * i/5;
+    ctx.fillText(String(val), m.left - 46, yy + 4);
   }
+
   // x ticks: 0, N/4, N/2, 3N/4, N
   const xs = [0, Math.floor(N/4), Math.floor(N/2), Math.floor(3*N/4), N];
   for(const xi of xs){
-    const xx = margins.left + (w - margins.left - margins.right) * (xi / N);
-    ctx.fillText(String(xi), xx - 8, h - margins.bottom + 18);
+    const xx = m.left + (w - m.left - m.right) * (xi / N);
+    ctx.fillText(String(xi), xx - 8, h - m.bottom + 18);
   }
 
   ctx.restore();
 }
 
-// map data coords -> canvas pixel
-function makeMapper(margins, N, maxY){
-  const w = canvas.clientWidth, h = parseInt(canvas.style.height);
+function makeMainMapper(main, N){
+  const w = main.w, h = main.h, m = main.margins;
   return {
-    x: x => margins.left + (w - margins.left - margins.right) * (x / N),
-    y: y => margins.top + (h - margins.top - margins.bottom) * (1 - (y / maxY))
+    x: x => m.left + (w - m.left - m.right) * (x / N),
+    y: y => m.top + (h - m.top - m.bottom) * (1 - y) // y in [0,1]
   };
 }
 
-// ---- main simulation & plot ----
-async function runSimulation(opts){
-  // options
-  const N = opts.N; // number of trials
-  const paths = opts.paths;
-  const p = opts.p;
-  const animate = opts.animate;
-  const delay = opts.delay;
+function drawHistAxes(hist){
+  const w = hist.w, h = hist.h, m = hist.margins;
+  ctx.save();
+  // outline for histogram area
+  ctx.strokeStyle = '#d6e6ff';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(hist.x + m.left - 1, m.top - 1, w - m.left - m.right + 2, h - m.top - m.bottom + 2);
+  // label
+  ctx.fillStyle = '#38506b';
+  ctx.font = '12px system-ui';
+  ctx.fillText('Distribution of f(N)', hist.x + 8, m.top + 12);
+  ctx.restore();
+}
 
-  const margins = { left: 70, right: 40, top: 30, bottom: 50 };
-  const maxY = N; // successes range 0..N
+// simulate one path returning sequence of frequencies f(t) length N+1
+function simulateOnePathFreq(N, p){
+  const seq = new Array(N+1);
+  let cum = 0;
+  seq[0] = 0; // convention f(0)=0
+  for(let t=1;t<=N;t++){
+    cum += randBernoulli(p);
+    seq[t] = cum / t; // frequency relative
+  }
+  return seq;
+}
+
+// main function
+async function runSimulation(opts){
+  const N = opts.N, paths = opts.paths, p = opts.p, animate = opts.animate, delay = opts.delay;
   resizeCanvas();
   clearCanvas();
-  drawAxes(margins, N, maxY);
-  const map = makeMapper(margins, N, maxY);
 
-  // draw expected mean line (np)
+  const layout = getLayout();
+  const main = layout.main, hist = layout.hist;
+  drawMainAxes(main, N);
+  drawHistAxes(hist);
+
+  const map = makeMainMapper(main, N);
+
+  // draw theoretical horizontal line y = p
   ctx.save();
   ctx.strokeStyle = 'rgba(20,110,230,1)';
   ctx.lineWidth = 2;
+  ctx.setLineDash([6,4]);
   ctx.beginPath();
-  ctx.moveTo(map.x(0), map.y(0));
-  // mean successes grows linearly: mean(t) = t * p
-  for(let t=0;t<=N;t++){
-    const meanY = t * p;
-    ctx.lineTo(map.x(t), map.y(meanY));
-  }
+  ctx.moveTo(map.x(0), map.y(p));
+  ctx.lineTo(map.x(N), map.y(p));
   ctx.stroke();
+  ctx.setLineDash([]);
   ctx.restore();
 
-  // storage for final successes
+  // draw trajectories
+  ctx.save();
+  ctx.lineWidth = 1.0;
+  const alpha = 0.12;
+  const batch = 5;
+  let idx = 0;
   const finals = new Array(paths).fill(0);
 
-  // To reduce overdraw, draw trajectories in lighter color
-  ctx.save();
-  ctx.lineWidth = 1.2;
-
-  // If not animating, we'll draw all trajectories faintly and then overlay histogram+gauss
-  // If animating, draw in batches with small pause to visualize growth
-  const batch = 5; // how many paths per immediate iteration (if animating)
-  let pathIndex = 0;
-
-  // pre-generate all paths if not animating? We'll generate on the fly
-  function simulateOnePath(){
-    const seq = new Array(N+1);
-    let cum = 0;
-    seq[0] = 0;
-    for(let t=1;t<=N;t++){
-      cum += randBernoulli(p);
-      seq[t] = cum;
-    }
-    return seq;
-  }
-
-  function drawPath(seq, colorAlpha=0.12){
+  function drawPath(seq){
     ctx.beginPath();
-    ctx.strokeStyle = `rgba(20,110,230,${colorAlpha})`;
+    ctx.strokeStyle = `rgba(20,110,230,${alpha})`;
     ctx.moveTo(map.x(0), map.y(seq[0]));
     for(let t=1;t<=N;t++){
       ctx.lineTo(map.x(t), map.y(seq[t]));
@@ -389,103 +404,90 @@ async function runSimulation(opts){
     ctx.stroke();
   }
 
-  // animate or instant
   if(!animate){
-    // instant: draw all trajectories quickly
     for(let i=0;i<paths;i++){
-      const seq = simulateOnePath();
+      const seq = simulateOnePathFreq(N, p);
       finals[i] = seq[N];
-      drawPath(seq, 0.12);
+      drawPath(seq);
     }
-    ctx.restore();
   } else {
-    // animated: draw in small batches so UI remains responsive
-    ctx.restore();
-    while(pathIndex < paths){
-      const to = Math.min(pathIndex + batch, paths);
-      for(let i=pathIndex;i<to;i++){
-        const seq = simulateOnePath();
+    while(idx < paths){
+      const to = Math.min(idx + batch, paths);
+      for(let i=idx;i<to;i++){
+        const seq = simulateOnePathFreq(N, p);
         finals[i] = seq[N];
-        drawPath(seq, 0.12);
+        drawPath(seq);
       }
-      pathIndex = to;
-      // update progress text
-      document.getElementById('info').textContent = `Simulated ${pathIndex}/${paths} paths...`;
-      // yield to UI
+      idx = to;
+      document.getElementById('info').textContent = `Simulated ${idx}/${paths} paths...`;
       await new Promise(r => setTimeout(r, delay));
     }
   }
+  ctx.restore();
 
-  // after drawing trajectories, compute histogram of finals
-  // bins are integers 0..N
-  const bins = new Array(N+1).fill(0);
-  for(const v of finals) bins[v]++;
+  // compute histogram of finals (f(N)) on [0,1]
+  const bins = 40; // number of bins
+  const counts = new Array(bins).fill(0);
+  for(const v of finals){
+    // clamp edge case v==1
+    const clamped = Math.max(0, Math.min(1, v));
+    const bin = Math.min(bins-1, Math.floor(clamped * bins));
+    counts[bin]++;
+  }
+  const maxCount = Math.max(...counts, 1);
 
-  // plot histogram (bars) at bottom area with red color
-  // compute scaling for histogram: find max bin count to scale height
-  const maxBin = Math.max(...bins);
-  // we draw histogram in a separate overlay area: map y from 0..maxY already, but histogram height scale proportional to counts
-  // We'll normalize a histogram bar height to at most 40% of canvas height
-  const histMaxHeight = (canvas.clientHeight - margins.top - margins.bottom) * 0.35;
+  // draw vertical histogram in hist area, bars horizontal width proportional to count
+  const hw = hist.w, hh = hist.h, hm = hist.margins;
+  const histInnerW = hw - hm.left - hm.right;
+  const histInnerH = hh - hm.top - hm.bottom;
+  const binHeight = histInnerH / bins;
+
+  // for alignment, we draw histogram from top (1.0) to bottom (0.0)
   ctx.save();
-  for(let k=0;k<=N;k++){
-    if(bins[k] === 0) continue;
-    const binCount = bins[k];
-    const binWidthPx = Math.max(2, ( (canvas.clientWidth - margins.left - margins.right) / (N+1) ));
-    const centerX = map.x(k);
-    const barH = (binCount / maxBin) * histMaxHeight;
-    const barTopY = (canvas.clientHeight - margins.bottom) - barH;
+  for(let b=0;b<bins;b++){
+    const cnt = counts[b];
+    if(cnt === 0) continue;
+    const yTop = hm.top + b * binHeight;
+    const barW = (cnt / maxCount) * (histInnerW - 8);
+    const xLeft = hist.x + hm.left + (histInnerW - 8) - barW; // align to right within hist area
     ctx.fillStyle = 'rgba(220,40,40,0.9)';
-    ctx.fillRect(centerX - binWidthPx*0.4, barTopY, binWidthPx*0.8, barH);
+    ctx.fillRect(xLeft, yTop + 2, barW, Math.max(1, binHeight - 4));
+  }
+  // draw y ticks inside histogram for reference (0..1)
+  ctx.fillStyle = '#38506b';
+  ctx.font = '11px system-ui';
+  for(let i=0;i<=4;i++){
+    const frac = 1 - i/4;
+    const by = hm.top + (1 - frac) * histInnerH;
+    ctx.fillText(frac.toFixed(2), hist.x + 8, by + 4);
+    ctx.beginPath();
+    ctx.strokeStyle = '#edf4ff';
+    ctx.moveTo(hist.x + hm.left, by);
+    ctx.lineTo(hist.x + hm.left + histInnerW, by);
+    ctx.stroke();
   }
   ctx.restore();
 
-  // compute and overlay Gaussian curve (CLT) for final successes
-  // mean = N*p, var = N*p*(1-p)
-  const mu = N * p;
-  const sigma = Math.sqrt(N * p * (1 - p));
-  // To align pdf with histogram, scale pdf by (paths * binWidth)
-  const binWidth = 1; // integer bins
-  const scaleFactor = paths * binWidth; // scaling of pdf so area ~ paths
-  // But we must map pdf values to pixel heights matching histogram scaling used above.
-  // We'll compute theoretical counts for each integer k and draw a green polyline connecting them,
-  // convert counts to pixel heights using same histMaxHeight and maxBin.
-  const theoCounts = new Array(N+1).fill(0);
-  let theoMax = 0;
-  for(let k=0;k<=N;k++){
-    const pdfVal = gaussianPdf(k, mu, sigma);
-    const expectedCount = pdfVal * paths; // approximate expected number of paths landing on value k
-    theoCounts[k] = expectedCount;
-    if(expectedCount > theoMax) theoMax = expectedCount;
-  }
-  // We want to draw gaussian overlay scaled to histogram's pixel scale; compute factor to convert counts -> pixels:
-  const countToPx = (maxBin === 0) ? 0 : (histMaxHeight / maxBin);
-
-  // draw gaussian overlay as smooth curve
+  // draw small marker for theoretical p on histogram (horizontal line across histogram)
+  const pPos = hm.top + (1 - p) * histInnerH;
   ctx.save();
-  ctx.lineWidth = 2.4;
-  ctx.strokeStyle = 'rgba(40,180,40,0.95)';
+  ctx.strokeStyle = 'rgba(20,110,230,1)';
+  ctx.lineWidth = 2;
   ctx.beginPath();
-  let first = true;
-  for(let k=0;k<=N;k++){
-    const cnt = theoCounts[k];
-    const barH = cnt * countToPx;
-    const y = (canvas.clientHeight - margins.bottom) - barH;
-    const x = map.x(k);
-    if(first){ ctx.moveTo(x, y); first=false; } else ctx.lineTo(x, y);
-  }
+  ctx.moveTo(hist.x + hm.left - 2, pPos);
+  ctx.lineTo(hist.x + hm.left + histInnerW + 2, pPos);
   ctx.stroke();
   ctx.restore();
 
-  // draw small label showing mu and sigma and some metrics
+  // show summary
+  const empiricalMean = finals.reduce((a,b)=>a+b,0) / paths;
   document.getElementById('info').innerHTML =
-    `Paths: ${paths}, Trials N: ${N}, p: ${p.toFixed(2)} — empirical mean of final successes: ${(finals.reduce((a,b)=>a+b,0)/paths).toFixed(3)}; theoretical mean: ${mu.toFixed(3)}; σ = ${sigma.toFixed(3)}.`;
+    `Paths: ${paths}, Trials N: ${N}, p: ${p.toFixed(3)} — empirical mean f(N): ${empiricalMean.toFixed(4)}.`;
 
-  // done
-  return { finals, bins, mu, sigma };
+  return { finals, counts, bins };
 }
 
-// ---- UI wiring ----
+// UI wiring
 document.getElementById('run').addEventListener('click', async () => {
   const N = Math.max(1, Math.min(2000, parseInt(document.getElementById('N').value) || 200));
   const paths = Math.max(1, Math.min(2000, parseInt(document.getElementById('paths').value) || 200));
@@ -502,7 +504,7 @@ document.getElementById('clear').addEventListener('click', () => {
   document.getElementById('info').textContent = 'Cleared.';
 });
 
-// initialize example
+// init
 document.getElementById('info').textContent = 'Ready. Set parameters and click Run.';
 </script>
 </body>
