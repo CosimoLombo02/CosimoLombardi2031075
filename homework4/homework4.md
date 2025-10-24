@@ -389,6 +389,9 @@ document.getElementById('info').textContent = 'Ready. Set parameters and click R
 </script>
 </body>
 
+# Code and explanation
+![Code of the demo](./carbon.png)
+
 ##  Simulation of the Law of Large Numbers
 
 We simulate the LLN by generating multiple **trajectories** of Bernoulli trials and plotting their **relative frequencies** over time.
