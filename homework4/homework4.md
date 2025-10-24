@@ -90,7 +90,7 @@ This visualization provides both qualitative and quantitative evidence of the La
 </head>
 <body>
   <div class="card">
-    <h1>Demo<sub>n</sub>/n</h1>
+    <h1>Demo</h1>
     <p class="meta">Demo</p>
 
     <div class="row">
