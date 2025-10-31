@@ -367,7 +367,8 @@ Different measures of location provide different perspectives on the same datase
   </script>
 </body>
 
-
+## Code of the demo
+![Code of the demo](./carbon(2).png)
 
 
 
@@ -584,4 +585,5 @@ The provided implementation demonstrates both modes using clean, modular JavaScr
 
 
 Choosing an appropriate measure of location depends on both the statistical properties of the data and the purpose of analysis. Awareness of these nuances enhances the accuracy and interpretability of statistical summaries, preventing common pitfalls in data-driven decision-making.
+
 
