@@ -75,7 +75,7 @@
       <h3>Insert values one by one:</h3>
       <input id="singleValue" type="number" placeholder="Enter a number" />
       <button onclick="addValue()">Add Value</button>
-      <button onclick="computeStepVector()">Calculate</button>
+      <button onclick="resetValues()">Reset</button>
       <div class="values-list" id="valuesList">Current data: []</div>
     </div>
 
@@ -99,6 +99,13 @@
       document.getElementById('valuesList').innerText = 'Current data: []';
     }
 
+    function resetValues() {
+      values = [];
+      document.getElementById('valuesList').innerText = 'Current data: []';
+      document.getElementById('result').style.display = 'none';
+      document.getElementById('singleValue').value = '';
+    }
+
     function processWholeVector() {
       const input = document.getElementById('vectorInput').value;
       const arr = input.split(',')
@@ -117,17 +124,10 @@
         values.push(val);
         document.getElementById('singleValue').value = '';
         document.getElementById('valuesList').innerText = `Current data: [${values.join(', ')}]`;
+        showResults(values); // Calcola subito mean e variance
       } else {
         alert("Please enter a valid number.");
       }
-    }
-
-    function computeStepVector() {
-      if (values.length === 0) {
-        alert("No values entered yet.");
-        return;
-      }
-      showResults(values);
     }
 
     function mean(arr) {
@@ -136,6 +136,7 @@
     }
 
     function variance(arr) {
+      if (arr.length < 2) return 0;
       const m = mean(arr);
       const squaredDiffs = arr.map(x => Math.pow(x - m, 2));
       return squaredDiffs.reduce((a, b) => a + b, 0) / (arr.length - 1);
@@ -143,7 +144,7 @@
 
     function showResults(arr) {
       const m = mean(arr).toFixed(4);
-      const v = variance(arr).toFixed(4);
+      const v = arr.length > 1 ? variance(arr).toFixed(4) : 'N/A (need ≥2 values)';
       const res = `
         <strong>Data:</strong> [${arr.join(', ')}]<br>
         <strong>Mean:</strong> ${m}<br>
