@@ -213,7 +213,7 @@ Remaining values: {50, 60, 70, 80} → Mean = 65.
 Different measures of location provide different perspectives on the same dataset. The arithmetic mean is efficient but fragile in the presence of outliers; the median is robust but ignores the magnitude of extreme values; and the mode is conceptually simple but statistically limited. The geometric and harmonic means are indispensable in multiplicative or rate-based contexts, while the trimmed mean offers a balanced alternative.
 
 
-# Demo of mean and variance
+
 <style>
     body {
       font-family: Arial, sans-serif;
@@ -267,7 +267,7 @@ Different measures of location provide different perspectives on the same datase
       margin-bottom: 1rem;
     }
   </style>
-</head>
+
 <body>
   <h1>Mean and Variance Calculator</h1>
   <div class="container">
@@ -585,5 +585,6 @@ The provided implementation demonstrates both modes using clean, modular JavaScr
 
 
 Choosing an appropriate measure of location depends on both the statistical properties of the data and the purpose of analysis. Awareness of these nuances enhances the accuracy and interpretability of statistical summaries, preventing common pitfalls in data-driven decision-making.
+
 
 
