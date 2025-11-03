@@ -269,7 +269,7 @@ Different measures of location provide different perspectives on the same datase
   </style>
 
 <body>
-  <h1>Mean and Variance Calculator</h1>
+  <h1 id="Demo">Mean and Variance Calculator</h1>
   <div class="container">
     <h3>Choose Input Mode:</h3>
     <button onclick="showWholeInput()">Enter Full Vector</button>
@@ -585,6 +585,7 @@ The provided implementation demonstrates both modes using clean, modular JavaScr
 
 
 Choosing an appropriate measure of location depends on both the statistical properties of the data and the purpose of analysis. Awareness of these nuances enhances the accuracy and interpretability of statistical summaries, preventing common pitfalls in data-driven decision-making.
+
 
 
 
