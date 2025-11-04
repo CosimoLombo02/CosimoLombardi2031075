@@ -25,4 +25,8 @@ Code demo of Bernoulli
 Median and many more
 [Homework 5](homework5/homework5.md)
 
+# Homework6
+Welford incremental update and classic mean and variance
+[Homework 6](homework5/homework6.md)
+
 
