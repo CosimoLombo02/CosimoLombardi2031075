@@ -1,10 +1,5 @@
-# Mean and Variance — Detailed Proofs and Code Explanation
+# CosimoLombardi2031075
 
-##  Plain-text proofs
-
-We avoid LaTeX commands and present formulas in readable plain text.  
-Indices use the notation `mean_n` for the mean after *n* observations,  
-`x_n` for the n-th data point, and `M2_n` for the running sum of squared deviations after *n* observations.
 
 ---
 
@@ -161,3 +156,4 @@ Time: O(1) per observation
 Memory: O(1) beyond storing the three scalars (`n`, `mean`, `M2`)
 
 # Demo 
+
