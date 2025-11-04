@@ -27,6 +27,6 @@ Median and many more
 
 # Homework6
 Welford incremental update and classic mean and variance
-[Homework 6](homework5/homework6.md)
+[Homework 6](homework6/homework6.md)
 
 
