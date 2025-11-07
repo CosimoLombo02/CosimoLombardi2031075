@@ -526,7 +526,7 @@ window.addEventListener("resize", () => {
 
 </body>
 
-# Random Walk Breach Simulation — JavaScript Code Walkthrough
+![code](./carbon.png)
 
 
 ---
@@ -694,18 +694,9 @@ Thus, for large n, the empirical distribution of \( S_n \) approaches a **Normal
 
 ---
 
-##  Summary of Concepts
 
-| Concept | Representation |
-|----------|----------------|
-| Weekly update outcome | Random variable (+1 or −1) |
-| Aggregate score | Random walk position \( S_t \) |
-| Breach probability | \( q = 1 - (1-p)^m \) |
-| Theoretical model | Binomial(n, q) distribution |
-| Convergence metric | Total Variation Distance |
-| Visualization | Random walk and histogram with labeled axes |
 
----
+
 
 ##  Conclusion
 The JavaScript code fully models a **stochastic process** equivalent to a symmetric or biased random walk, where drift and variance depend on the attackers’ success probability. By comparing the simulated results to the **Binomial(n, q)** distribution, we can quantify convergence and visualize how randomness manifests in finite systems.
