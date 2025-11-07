@@ -1,7 +1,7 @@
 # CosimoLombardi2031075
 
 
-# Comparative Study: Mean and Variance Calculator vs Bernoulli Random-Walk Simulation
+## Comparative Study: Mean and Variance Calculator vs Bernoulli Random-Walk Simulation
 
 ##  Introduction
 
@@ -159,5 +159,6 @@ Both explore how **repeated trials**, whether deterministic or random, exhibit c
 | **Combinatorial Link** | Minimal | Strong (Pascal, Binomial, Fibonacci) |
 
 Thus, the **Mean and Variance Calculator** exemplifies *analytical computation* of statistical measures, while the **Bernoulli Random-Walk Simulation** embodies *probabilistic modeling*, visually revealing the structure of the **Binomial process**, the **Law of Large Numbers**, and its deep **combinatorial relationships**.
+
 
 
