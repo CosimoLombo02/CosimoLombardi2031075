@@ -4,7 +4,7 @@
 
 ---
 
-## 
+## Homework7
 
 A server receives weekly security updates for `n` weeks. Each week there are `m` attackers, each with a probability `p` of breaching the system independently. For every week:
 
@@ -15,7 +15,7 @@ Each trajectory represents the cumulative score of these ±1 events over `n` wee
 
 ---
 
-## 
+
 
 ###  Probability of a Secure Week
 
