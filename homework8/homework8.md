@@ -1,6 +1,6 @@
-# **Comparative Analysis of Two JavaScript Simulations: Random Walk Security Model and Mean–Variance Calculator**
+# CosimoLombardi2031075
 
-## ** Introduction**
+##  Introduction
 
 This document presents an integrated theoretical and computational analysis of two JavaScript-based simulations:
 
@@ -12,9 +12,9 @@ Connections with the **Fibonacci sequence** and constrained random walks are als
 
 ---
 
-## ** Theoretical Framework**
+##  Theoretical Framework
 
-### ** The Bernoulli Process and the Law of Large Numbers**
+###  The Bernoulli Process and the Law of Large Numbers
 
 Both simulations emerge from the same probabilistic foundation: the **Bernoulli process**.  
 In the random walk simulation, each week’s outcome—secure or breached—is a Bernoulli trial with success probability:
@@ -32,7 +32,7 @@ This mirrors the purpose of the mean–variance calculator: both simulate conver
 
 ---
 
-### ** Random Walk Interpretation**
+###  Random Walk Interpretation
 
 Assigning +1 for a secure week and −1 for a breached week transforms the outcomes into a **one-dimensional random walk**.  
 After *n* weeks, the cumulative score *S* is:
@@ -48,7 +48,7 @@ where *k = (s + n) / 2* and *C(n, k)* denotes the binomial coefficient.
 
 ---
 
-### ** Binomial Coefficients and Pascal’s Triangle**
+###  Binomial Coefficients and Pascal’s Triangle
 
 The **binomial coefficients** *C(n, k)* count the number of distinct ways *k* secure outcomes can occur among *n* trials.  
 They correspond directly to entries in **Pascal’s triangle**, where each coefficient satisfies:
@@ -60,7 +60,7 @@ Pascal’s triangle is therefore a visual map of all possible random walk trajec
 
 ---
 
-### ** Binomial Expansion and the Generating Function**
+###  Binomial Expansion and the Generating Function
 
 The total probability across all outcomes satisfies:
 
@@ -75,7 +75,7 @@ Hence, the random walk’s probability structure is mathematically equivalent to
 
 ---
 
-### ** Fibonacci Sequence and Restricted Random Walks**
+###  Fibonacci Sequence and Restricted Random Walks
 
 If the random walk is **restricted** — for example, it cannot go below zero (modeling a system that fails permanently after a breach) — the number of valid trajectories up to step *n* satisfies a **Fibonacci-like recurrence**:
 
@@ -86,9 +86,9 @@ This demonstrates how certain constrained stochastic processes naturally connect
 
 ---
 
-## ** Computational Comparison of JavaScript Implementations**
+##  Computational Comparison of JavaScript Implementations
 
-### ** Conceptual Differences**
+###  Conceptual Differences
 
 | Aspect | Random Walk Security Simulation | Mean–Variance Calculator |
 |--------|---------------------------------|--------------------------|
@@ -102,7 +102,7 @@ Despite their structural differences, both programs illustrate the same mathemat
 
 ---
 
-### ** Structural Comparison in JavaScript**
+###  Structural Comparison in JavaScript
 
 - The **random walk simulation** uses **nested loops** to simulate multiple trajectories, each consisting of *n* weekly Bernoulli draws.  
   Each trajectory’s final score is recorded, forming a histogram approximating the theoretical binomial distribution.
@@ -116,7 +116,7 @@ Both share:
 
 ---
 
-### ** Computational Complexity**
+###  Computational Complexity
 
 - **Random Walk Simulation:** time complexity is O(n × n_trials), since each trajectory involves *n* random draws.  
 - **Mean–Variance Calculator:** time complexity is O(n), as it performs single-pass aggregation.
@@ -125,7 +125,7 @@ Thus, the first explores **statistical convergence** through repetition, while t
 
 ---
 
-## ** Synthesis: Probabilistic and Combinatorial Insights**
+##  Synthesis: Probabilistic and Combinatorial Insights
 
 Both simulations are complementary examples of **probabilistic convergence**:
 
@@ -142,7 +142,7 @@ This synthesis illustrates the unity between probability, combinatorics, and com
 
 ---
 
-## ** Conclusion**
+##  Conclusion
 
 The comparison between the **Random Walk Security Simulation** and the **Mean–Variance Calculator** reveals a deep conceptual bridge between stochastic and deterministic computation.
 
@@ -152,5 +152,6 @@ Both, however, rest upon the **binomial framework** and demonstrate convergence 
 The relationships among **binomial coefficients**, **Pascal’s triangle**, **binomial expansion**, and **Fibonacci recurrence** unify these models under a single mathematical theme — showing how random variability, combinatorial counting, and deterministic averages are manifestations of the same probabilistic principles.
 
 ---
+
 
 
