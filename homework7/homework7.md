@@ -221,7 +221,7 @@ This process directly parallels the concept of a **biased random walk**.
 
 
 
-![code](./carbon(4).png)
+![code](./carbon(1).png)
 
 
 
