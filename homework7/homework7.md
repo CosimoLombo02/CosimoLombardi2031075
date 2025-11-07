@@ -224,7 +224,7 @@ This process directly represents a **biased random walk**.
         { ...traceBinom, x: scores, y: binomVals }
       ], layout, { responsive: false });
     });
-  </script> </body
+  </script> </body>
 
 
 
