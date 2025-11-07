@@ -29,4 +29,11 @@ Median and many more
 Welford incremental update and classic mean and variance
 [Homework 6](homework6/homework6.md)
 
+# Homework7
+Server, attackers and many more
+[Homework 7](homework7/homework7.md)
+
+# Homework7
+Confrontation of homework7 and homework5
+[Homework 8](homework8/homework8.md)
 
