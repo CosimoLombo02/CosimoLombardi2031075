@@ -526,9 +526,195 @@ window.addEventListener("resize", () => {
 
 </body>
 
+# Random Walk Breach Simulation — JavaScript Code Walkthrough
+
+
+---
+
+##   Canvas Preparation (HiDPI-safe Rendering)
+```js
+function prepareCanvas(canvas) {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  const w = Math.floor(rect.width * dpr);
+  const h = Math.floor(rect.height * dpr);
+  if (canvas.width !== w || canvas.height !== h) {
+    canvas.width = w;
+    canvas.height = h;
+  }
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { ctx, width: rect.width, height: rect.height };
+}
+```
+**Purpose:** ensures the canvas renders correctly on high-resolution displays by adjusting for device pixel ratio.
+
+---
+
+##  Mathematical Utilities
+```js
+const clamp = (x, a, b) => Math.max(a, Math.min(x, b));
+
+function choose(n, k) {
+  if (k < 0 || k > n) return 0;
+  if (k === 0 || k === n) return 1;
+  k = Math.min(k, n - k);
+  let res = 1;
+  for (let i = 1; i <= k; i++) res = (res * (n - k + i)) / i;
+  return res;
+}
+
+function binomialPMF(n, q) {
+  const p = new Float64Array(n + 1);
+  for (let k = 0; k <= n; k++) {
+    p[k] = choose(n, k) * Math.pow(q, k) * Math.pow(1 - q, n - k);
+  }
+  return p;
+}
+```
+- **`choose(n, k)`** computes the binomial coefficient efficiently.
+- **`binomialPMF`** returns the theoretical Binomial(n, q) probabilities for comparison.
+
+---
+
+##  Simulation Engine
+```js
+function simulateWalks(n, runs, q, keep) {
+  const kept = Math.min(keep, runs);
+  const paths = new Array(kept);
+  for (let i = 0; i < kept; i++) paths[i] = new Int16Array(n + 1);
+  const counts = new Map();
+
+  for (let r = 0; r < runs; r++) {
+    let s = 0;
+    const store = r < kept;
+    if (store) paths[r][0] = 0;
+    for (let t = 1; t <= n; t++) {
+      s += Math.random() < q ? -1 : 1;
+      if (store) paths[r][t] = s;
+    }
+    counts.set(s, (counts.get(s) || 0) + 1);
+  }
+  return { paths, counts };
+}
+```
+**Explanation:**
+- Runs multiple **random walks** of length `n`.
+- Each step adds +1 or −1 depending on whether the server is secure or breached.
+- Stores a limited number of paths (`keep`) for plotting and records the final scores in a frequency map `counts`.
+
+---
+
+##  Visualization
+### a. Random Walk Trajectories
+```js
+function drawPaths(paths, canvas) { ... }
+```
+- Plots each simulated path over time.
+- X-axis = week index (0 → n)  
+- Y-axis = cumulative score \( S_t \)
+- Uses automatic scaling, soft colors, and transparency for overlapping lines.
+- Includes labeled axes for both time and score values.
+
+###  Endpoint Distribution
+```js
+function drawHistogram(counts, n, R, pmf, canvas) { ... }
+```
+- Draws the empirical histogram of final scores.
+- Overlays the **theoretical binomial PMF** in green.
+- X-axis: total score \( S_n \)  
+- Y-axis: relative frequency \( P(S_n) \)
+
+---
+
+##  Statistical Analysis
+### a. Data Table
+```js
+function updateTable(counts, n, R, pmf) { ... }
+```
+Creates a table showing:
+| Symbol | Meaning |
+|--------|----------|
+| s = n−2k | Final cumulative score |
+| k | Number of breaches |
+| Empirical freq | Observed probability |
+| Theoretical | Binomial probability |
+
+### b. Total Variation Distance
+```js
+function totalVariation(counts, n, R, pmf) {
+  let tv = 0;
+  for (let k = 0; k <= n; k++) {
+    const s = n - 2*k;
+    const f = (counts.get(s) || 0) / R;
+    tv += Math.abs(f - pmf[k]);
+  }
+  return 0.5 * tv;
+}
+```
+Measures how close the empirical distribution is to the theoretical binomial law:
+\[ TV = \frac{1}{2} \sum_k |f_{emp}(k) - f_{theory}(k)| \]
+
+---
+
+##  Controller Logic
+### a. Parameter Handling
+On clicking **Run**, the code reads user inputs:
+- `n`: number of weeks  
+- `m`: number of attackers  
+- `p`: breach probability per attacker  
+- `R`: number of simulations  
+
+It computes the **aggregate breach probability per week** as:
+\[ q = 1 - (1 - p)^m \]
+
+### b. Simulation Flow
+1. Compute the theoretical Binomial(n, q).  
+2. Run the random walk simulation.  
+3. Plot trajectories and histograms.  
+4. Display the convergence metric (total variation distance).
+
+---
+
+##  Mathematical Interpretation
+
+### Expected Value
+Each week contributes either +1 (secure) or −1 (breached).  
+Let \( X_i \) be the weekly increment, then:
+\[ E[X_i] = (1 - q)(+1) + q(-1) = 1 - 2q \]
+and the total score after n weeks is:
+\[ E[S_n] = n(1 - 2q) \]
+
+### Variance
+Since steps are independent:
+\[ Var[S_n] = 4nq(1 - q) \]
+
+Thus, for large n, the empirical distribution of \( S_n \) approaches a **Normal distribution** with:
+\[ S_n \approx N(n(1 - 2q), 4nq(1 - q)) \]
+
+---
+
+##  Summary of Concepts
+
+| Concept | Representation |
+|----------|----------------|
+| Weekly update outcome | Random variable (+1 or −1) |
+| Aggregate score | Random walk position \( S_t \) |
+| Breach probability | \( q = 1 - (1-p)^m \) |
+| Theoretical model | Binomial(n, q) distribution |
+| Convergence metric | Total Variation Distance |
+| Visualization | Random walk and histogram with labeled axes |
+
+---
+
+##  Conclusion
+The JavaScript code fully models a **stochastic process** equivalent to a symmetric or biased random walk, where drift and variance depend on the attackers’ success probability. By comparing the simulated results to the **Binomial(n, q)** distribution, we can quantify convergence and visualize how randomness manifests in finite systems.
+
+---
 
 
 
 
-# Demo and code
+
+
 
