@@ -34,6 +34,6 @@ Server, attackers and many more
 [Homework 7](homework7/homework7.md)
 
 # Homework8
-Confrontation of homework6 and homework5
+Confrontation of homework7 and homework5
 [Homework 8](homework8/homework8.md)
 
