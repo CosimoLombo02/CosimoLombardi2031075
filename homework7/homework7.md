@@ -104,13 +104,7 @@ This process directly represents a **biased random walk**.
 ## Demo, code and code explanations
 
 <style>
-body {
-  background: #0f172a;
-  color: #f8fafc;
-  font-family: system-ui, sans-serif;
-  margin: 0;
-  padding: 20px;
-}
+
 .sim-container {
   max-width: 1200px;
   margin: 0 auto;
