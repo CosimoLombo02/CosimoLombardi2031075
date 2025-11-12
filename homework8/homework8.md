@@ -58,15 +58,16 @@ Number of paths(s) = C(N, k)
 Hence, each histogram bar in the random walk simulation directly corresponds to combinatorial path counts weighted by q^k (1 − q)^(N − k).  
 
 ###  Technical Comparison  
-| Aspect | Bernoulli Simulation | Random Walk Breach Simulation |
-|--------|----------------------|-------------------------------|
-| Core model | Bernoulli process, Law of Large Numbers | Aggregated Bernoulli process modeled as a biased random walk |
-| Variables | N (trials), p (success probability), m (paths) | n (weeks), m (attackers), p (individual success), q (aggregate prob) |
-| Visualization | f(t) vs t trajectories + histogram of f(N) | ±1 trajectories (random walk) + endpoint histogram |
-| Mathematical base | Binomial distribution on [0,1] | Transformed Binomial distribution on integer lattice [−n, n] |
-| Focus | Convergence of empirical mean | Empirical distribution and total variation distance |
-| User controls | Number of trials, success prob, animation | Weeks, attackers, runs, batch size, and animation |
-| Theoretical marker | Line y = p (expected mean) | Green curve = Binomial(n, q) theoretical PMF |
+| **Aspect** | **Bernoulli Simulation** | **Random Walk Breach Simulation** |
+|-------------|--------------------------|-----------------------------------|
+| **Core model** | Bernoulli process, Law of Large Numbers | Aggregated Bernoulli process modeled as a biased random walk |
+| **Variables** | N (trials), p (success probability), m (paths) | n (weeks), m (attackers), p (individual success), q (aggregate prob) |
+| **Visualization** | f(t) vs t trajectories + histogram of f(N) | ±1 trajectories (random walk) + endpoint histogram |
+| **Mathematical base** | Binomial distribution on [0,1] | Transformed Binomial distribution on integer lattice [−n, n] |
+| **Focus** | Convergence of empirical mean | Empirical distribution and total variation distance |
+| **User controls** | Number of trials, success prob, animation | Weeks, attackers, runs, batch size, and animation |
+| **Theoretical marker** | Line y = p (expected mean) | Green curve = Binomial(n, q) theoretical PMF |
+
 
 ###  Mathematical and Computational Analogies  
 Both codes are visual experiments in **probabilistic convergence**:  
@@ -79,5 +80,6 @@ Both employ large numbers of independent simulations, demonstrating the emergenc
 The first simulation focuses on the convergence of frequencies, while the second investigates endpoint distributions of stochastic dynamics.  
 Together, they illustrate the spectrum between **law of large numbers** (convergence of sample means) and **central limit theorem-like behavior** (distributional convergence).  
 Their shared reliance on binomial structures, combinatorial symmetry, and recursive mathematical laws (from Pascal’s triangle to Fibonacci recurrences) demonstrates the unifying depth of discrete probability theory.  
+
 
 
