@@ -58,15 +58,36 @@ Number of paths(s) = C(N, k)
 Hence, each histogram bar in the random walk simulation directly corresponds to combinatorial path counts weighted by q^k (1 − q)^(N − k).  
 
 ###  Technical Comparison  
-| **Aspect** | **Bernoulli Simulation** | **Random Walk Breach Simulation** |
-|-------------|--------------------------|-----------------------------------|
-| **Core model** | Bernoulli process, Law of Large Numbers | Aggregated Bernoulli process modeled as a biased random walk |
-| **Variables** | N (trials), p (success probability), m (paths) | n (weeks), m (attackers), p (individual success), q (aggregate prob) |
-| **Visualization** | f(t) vs t trajectories + histogram of f(N) | ±1 trajectories (random walk) + endpoint histogram |
-| **Mathematical base** | Binomial distribution on [0,1] | Transformed Binomial distribution on integer lattice [−n, n] |
-| **Focus** | Convergence of empirical mean | Empirical distribution and total variation distance |
-| **User controls** | Number of trials, success prob, animation | Weeks, attackers, runs, batch size, and animation |
-| **Theoretical marker** | Line y = p (expected mean) | Green curve = Binomial(n, q) theoretical PMF |
+The Bernoulli Simulation and the Random Walk Breach Simulation are both stochastic models derived from the Bernoulli process but differ in their structural representation, objectives, and analytical focus.
+
+1. Core Model  
+   - Bernoulli Simulation: Implements an independent Bernoulli process governed by the Law of Large Numbers.  
+   - Random Walk Breach Simulation: Models an aggregated Bernoulli process as a biased random walk, capturing cumulative deviations over discrete steps.
+
+2. Variable Structure  
+   - Bernoulli: Defined by the number of trials (N), success probability (p), and number of paths (m).  
+   - Random Walk: Extends the model with n (weeks), m (attackers), p (individual success probability), and q (aggregate probability).
+
+3. Mathematical Foundation  
+   - Bernoulli: Based on the Binomial distribution over [0, 1].  
+   - Random Walk: Employs a transformed Binomial distribution projected onto an integer lattice [−n, n].
+
+4. Output and Visualization  
+   - Bernoulli: Produces trajectories of f(t) vs. t and a histogram of f(N).  
+   - Random Walk: Generates ±1 step trajectories and a histogram of the final positions (endpoints).
+
+5. Analytical Focus  
+   - Bernoulli: Examines the convergence of the empirical mean to the expected value.  
+   - Random Walk: Investigates the empirical endpoint distribution and its total variation distance from the theoretical Binomial model.
+
+6. User Controls  
+   - Bernoulli: Adjustable parameters include the number of trials, success probability, and animation settings.  
+   - Random Walk: Provides control over weeks, number of attackers, number of runs, batch size, and animation.
+
+7. Theoretical Benchmark  
+   - Bernoulli: Theoretical reference line y = p indicates the expected mean.  
+   - Random Walk: Theoretical Binomial(n, q) PMF is represented as a green reference curve.
+
 
 
 ###  Mathematical and Computational Analogies  
@@ -80,6 +101,7 @@ Both employ large numbers of independent simulations, demonstrating the emergenc
 The first simulation focuses on the convergence of frequencies, while the second investigates endpoint distributions of stochastic dynamics.  
 Together, they illustrate the spectrum between **law of large numbers** (convergence of sample means) and **central limit theorem-like behavior** (distributional convergence).  
 Their shared reliance on binomial structures, combinatorial symmetry, and recursive mathematical laws (from Pascal’s triangle to Fibonacci recurrences) demonstrates the unifying depth of discrete probability theory.  
+
 
 
 
