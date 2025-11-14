@@ -36,7 +36,7 @@ As n becomes very large, this method converges to a Poisson process.
 
 ---
 ## Demo
-## Demo
+
 
 <style>
 body { font-family: Arial, sans-serif; background:#f7f7f7; padding:20px; }
@@ -194,7 +194,7 @@ window.chart = new Chart(ctx, {
 
 ##  Theoretical Interpretation
 
-1. Stochastic Process Approximation: The simulated process approximates a **Poisson process**.
+1. Stochastic Process Approximation: The simulated process approximates a Poisson process.
 2. Expected Value**: E[N(t)] ≈ λ t
 3. Variance: Var[N(t)] ≈ λ t
 4. Independent increments: guaranteed by independent Bernoulli trials.
@@ -214,5 +214,6 @@ window.chart = new Chart(ctx, {
 
 
 The JS code and explanation are aligned with **university-level stochastic process coursework** and satisfy the requirement to simulate, approximate, and analyze a counting process over [0, T].
+
 
 
