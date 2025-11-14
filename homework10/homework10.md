@@ -157,7 +157,7 @@ document.getElementById('simulateBtn').addEventListener('click', simulateCountin
 
 ##  Code and code explanation
 
-The following JavaScript code implements the simulation in a browser environment and plots the counting process using **Chart.js**.
+![code](./carbon.png)
 
 ###  Parameters and Time Grid
 
@@ -253,3 +253,4 @@ window.chart = new Chart(ctx, {
 
 
 The JS code and explanation are aligned with **university-level stochastic process coursework** and satisfy the requirement to simulate, approximate, and analyze a counting process over [0, T].
+
