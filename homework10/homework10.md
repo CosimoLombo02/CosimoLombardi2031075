@@ -213,7 +213,7 @@ window.chart = new Chart(ctx, {
 
 
 
-The JS code and explanation are aligned with **university-level stochastic process coursework** and satisfy the requirement to simulate, approximate, and analyze a counting process over [0, T].
+
 
 
 
