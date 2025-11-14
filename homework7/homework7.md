@@ -20,9 +20,7 @@ Each trajectory represents the cumulative score of these ±1 events over `n` wee
 
 
 ###  Probability of a Secure Week
-=======
-### Probability of a Secure Week
->>>>>>> bd7f5ee4920d6136b9bc0b907ac3b929687c77c4
+
 
 If each of the `m` attackers acts independently with breach probability `p`, then the probability that the system remains secure for a week is:
 
