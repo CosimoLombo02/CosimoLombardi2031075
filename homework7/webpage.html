@@ -1,122 +1,436 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>HMWK 7 – Security Random Walk Simulation</title>
-  <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    #chart {
-      width: 800px;
-      height: 500px;
-      margin: 20px auto;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Random Walk Breach Simulation</title>
+
+<style>
+body {
+  background: #0f172a;
+  color: #f8fafc;
+  font-family: system-ui, sans-serif;
+  margin: 0;
+  padding: 20px;
+}
+.sim-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.settings {
+  background: #1e293b;
+  padding: 16px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+.controls label {
+  margin-right: 6px;
+}
+.controls input,
+.controls select {
+  margin-right: 12px;
+  margin-bottom: 8px;
+  padding: 4px;
+  border-radius: 4px;
+  border: 1px solid #334155;
+  background: #0f172a;
+  color: #f8fafc;
+}
+.buttons {
+  margin-top: 10px;
+}
+button {
+  background: #2563eb;
+  color: #fff;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+button.danger {
+  background: #dc2626;
+}
+.card {
+  background: #1e293b;
+  padding: 14px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+.legend {
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  margin-bottom: 6px;
+}
+canvas {
+  width: 100%;
+  height: 300px;
+  display: block;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #e2e8f0;
+  margin-top: 8px;
+  font-size: 0.9rem;
+}
+th, td {
+  padding: 4px 8px;
+  border-bottom: 1px solid #334155;
+  text-align: center;
+}
+th:first-child, td:first-child {
+  text-align: left;
+}
+</style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center p-6">
 
-  <h1 class="text-3xl font-bold text-gray-800 mb-4">
-    HMWK 7 – Security Random Walk Simulation
-  </h1>
-
-  <!-- GUI input panel -->
-  <div class="bg-white shadow-md rounded-2xl p-6 w-full max-w-lg mb-6">
-    <div class="grid grid-cols-2 gap-4 mb-4">
-      <label class="flex flex-col">
-        <span class="font-semibold text-sm text-gray-700 mb-1">Weeks (n):</span>
-        <input id="nWeeks" type="number" value="20" min="1" class="border rounded-lg px-2 py-1">
-      </label>
-      <label class="flex flex-col">
-        <span class="font-semibold text-sm text-gray-700 mb-1">Attackers (m):</span>
-        <input id="mAttackers" type="number" value="10" min="1" class="border rounded-lg px-2 py-1">
-      </label>
-      <label class="flex flex-col">
-        <span class="font-semibold text-sm text-gray-700 mb-1">Breach prob (p):</span>
-        <input id="p" type="number" step="0.01" value="0.05" min="0" max="1" class="border rounded-lg px-2 py-1">
-      </label>
-      <label class="flex flex-col">
-        <span class="font-semibold text-sm text-gray-700 mb-1">Trajectories:</span>
-        <input id="nTrials" type="number" value="10000" min="100" class="border rounded-lg px-2 py-1">
-      </label>
+<body>
+<div class="sim-container">
+  <div class="settings">
+    <div class="controls">
+      <label>Weeks</label><input id="weeks" type="number" min="1" value="80">
+      <label>Attackers</label><input id="attackers" type="number" min="1" value="5">
+      <label>p (per attacker)</label><input id="pval" type="number" min="0" max="1" step="0.01" value="0.30">
+      <label>Runs</label><input id="runs" type="number" min="1" value="6000">
+      <label>Animate</label>
+      <select id="animate"><option value="true">Yes</option><option value="false" selected>No</option></select>
+      <label>Batch size</label><input id="batch" type="number" min="1" value="500">
+      <label>Paths shown</label><input id="keep" type="number" min="0" value="400">
     </div>
-    <button id="runBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-      Run Simulation
-    </button>
+    <div class="buttons">
+      <button id="run">Run</button>
+      <button id="clear" class="danger">Clear</button>
+    </div>
+    <div id="run-info" class="legend"></div>
+    <div id="run-stats" class="legend"></div>
   </div>
 
-  <!-- Chart container -->
-  <div id="chart" class="bg-white rounded-2xl shadow-md p-4"></div>
+  <div class="card">
+    <h3>Random Walk Trajectories</h3>
+    <p class="legend">Each line is a ±1 random walk. The drift = E[X] = 1 − 2q, where q is weekly breach probability.</p>
+    <canvas id="walkCanvas" width="1200" height="300"></canvas>
+  </div>
 
-  <script>
-    // ---- Math helpers ----
-    function combination(n, k) {
-      if (k < 0 || k > n) return 0;
-      k = Math.min(k, n - k);
-      let c = 1;
-      for (let i = 0; i < k; i++) c = (c * (n - i)) / (i + 1);
-      return c;
+  <div class="card">
+    <h3>Endpoint Distribution (t = n)</h3>
+    <p class="legend">Bars show empirical frequencies, green line is theoretical Binomial(n,q).</p>
+    <canvas id="histCanvas" width="1200" height="300"></canvas>
+    <div id="tableWrap" class="legend" style="margin-top:10px">Run the simulation to see results.</div>
+  </div>
+</div>
+
+<script>
+// ===== Canvas setup (HiDPI safe) =====
+function prepareCanvas(canvas) {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  const w = Math.floor(rect.width * dpr);
+  const h = Math.floor(rect.height * dpr);
+  if (canvas.width !== w || canvas.height !== h) {
+    canvas.width = w;
+    canvas.height = h;
+  }
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return { ctx, width: rect.width, height: rect.height };
+}
+
+// ===== Math utilities =====
+const clamp = (x, a, b) => Math.max(a, Math.min(x, b));
+
+function choose(n, k) {
+  if (k < 0 || k > n) return 0;
+  if (k === 0 || k === n) return 1;
+  k = Math.min(k, n - k);
+  let res = 1;
+  for (let i = 1; i <= k; i++) {
+    res = (res * (n - k + i)) / i;
+  }
+  return res;
+}
+
+function binomialPMF(n, q) {
+  const p = new Float64Array(n + 1);
+  for (let k = 0; k <= n; k++) {
+    p[k] = choose(n, k) * Math.pow(q, k) * Math.pow(1 - q, n - k);
+  }
+  return p;
+}
+
+// ===== Simulation =====
+function simulateWalks(n, runs, q, keep) {
+  const kept = Math.min(keep, runs);
+  const paths = new Array(kept);
+  for (let i = 0; i < kept; i++) {
+    paths[i] = new Int16Array(n + 1);
+  }
+  const counts = new Map();
+
+  for (let r = 0; r < runs; r++) {
+    let s = 0;
+    const store = r < kept;
+    if (store) paths[r][0] = 0;
+    for (let t = 1; t <= n; t++) {
+      s += Math.random() < q ? -1 : 1;
+      if (store) paths[r][t] = s;
     }
+    counts.set(s, (counts.get(s) || 0) + 1);
+  }
 
-    function binomialPMF(k, n, p) {
-      return combination(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k);
+  return { paths, counts };
+}
+
+// ===== Drawing functions (with axis ticks + values) =====
+function drawPaths(paths, canvas) {
+  const { ctx, width, height } = prepareCanvas(canvas);
+  ctx.clearRect(0, 0, width, height);
+  if (!paths.length) return;
+
+  const n = paths[0].length - 1;
+  const pad = { left: 50, right: 10, top: 10, bottom: 30 };
+  const W = width - pad.left - pad.right;
+  const H = height - pad.top - pad.bottom;
+  const x0 = pad.left, y0 = height - pad.bottom;
+
+  // determine min & max
+  let minY = 0, maxY = 0;
+  for (const p of paths) {
+    for (let t = 0; t <= n; t++) {
+      minY = Math.min(minY, p[t]);
+      maxY = Math.max(maxY, p[t]);
     }
+  }
+  if (minY === maxY) { minY--; maxY++; }
 
-    // ---- Simulation core ----
-    function simulateSecurity(nWeeks, mAttackers, p, nTrials) {
-      const secureProb = Math.pow(1 - p, mAttackers);
-      const scoreCounts = new Map();
+  const sx = W / n;
+  const sy = H / (maxY - minY);
 
-      for (let t = 0; t < nTrials; t++) {
-        let score = 0;
-        for (let week = 0; week < nWeeks; week++) {
-          const breached = Math.random() < 1 - secureProb;
-          score += breached ? -1 : +1;
-        }
-        scoreCounts.set(score, (scoreCounts.get(score) || 0) + 1);
-      }
+  // draw axes
+  ctx.strokeStyle = "#e2e8f0"; ctx.lineWidth = 1;
+  // X-axis
+  ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x0 + W, y0); ctx.stroke();
+  // Y-axis
+  ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x0, y0 - H); ctx.stroke();
 
-      const results = [];
-      for (let totalScore = -nWeeks; totalScore <= nWeeks; totalScore += 2) {
-        const freq = (scoreCounts.get(totalScore) || 0) / nTrials;
-        const k = (totalScore + nWeeks) / 2;
-        const expected = binomialPMF(k, nWeeks, secureProb);
-        results.push({ totalScore, freq, expected });
-      }
-      return results;
+  // draw ticks + labels on X-axis: 0, n/2, n
+  ctx.fillStyle = "#f8fafc";
+  ctx.font = "12px system-ui, sans-serif";
+  ctx.textAlign = "center"; ctx.textBaseline = "top";
+  const xticks = [0, Math.floor(n/2), n];
+  for (const t of xticks) {
+    const x = x0 + t * sx;
+    ctx.beginPath();
+    ctx.moveTo(x, y0);
+    ctx.lineTo(x, y0 + 6);
+    ctx.stroke();
+    ctx.fillText(`${t}`, x, y0 + 8);
+  }
+
+  // ticks + labels on Y-axis: minY, 0 (if between), maxY
+  ctx.textAlign = "right"; ctx.textBaseline = "middle";
+  const yticks = [minY, 0, maxY].filter((v, i, arr) => (i===0 || i===arr.length-1 || v===0));
+  for (const v of yticks) {
+    const y = y0 - (v - minY) * sy;
+    ctx.beginPath();
+    ctx.moveTo(x0 - 6, y);
+    ctx.lineTo(x0, y);
+    ctx.stroke();
+    ctx.fillText(`${v}`, x0 - 8, y);
+  }
+
+  // draw paths
+  ctx.globalAlpha = 0.7;
+  for (const p of paths) {
+    const grad = ctx.createLinearGradient(x0, 0, x0 + W, 0);
+    grad.addColorStop(0, "#93c5fd");
+    grad.addColorStop(1, "#a7f3d0");
+    ctx.strokeStyle = grad; ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    for (let t = 0; t <= n; t++) {
+      const x = x0 + t * sx;
+      const y = y0 - (p[t] - minY) * sy;
+      if (t === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
     }
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+}
 
-    // ---- Fixed chart layout ----
-    const layout = {
-      title: 'Distribution of Total Scores – Random Walk vs Binomial',
-      xaxis: { title: 'Total Score (2·#SecureWeeks − n)' },
-      yaxis: { title: 'Probability' },
-      legend: { orientation: 'h' },
-      margin: { t: 50, l: 60, r: 30, b: 60 }
-    };
+function drawHistogram(counts, n, R, pmf, canvas) {
+  const { ctx, width, height } = prepareCanvas(canvas);
+  ctx.clearRect(0, 0, width, height);
 
-    const traceSim = { x: [], y: [], type: 'bar', name: 'Simulated', opacity: 0.6 };
-    const traceBinom = { x: [], y: [], type: 'scatter', mode: 'lines+markers', name: 'Binomial (Expected)', line: { width: 2 } };
+  const pad = { left: 50, right: 10, top: 10, bottom: 30 };
+  const W = width - pad.left - pad.right;
+  const H = height - pad.top - pad.bottom;
+  const x0 = pad.left, y0 = height - pad.bottom;
 
-    // Create empty chart (fixed size)
-    Plotly.newPlot('chart', [traceSim, traceBinom], layout, { responsive: false });
+  const scores = [];
+  for (let s = -n; s <= n; s += 2) scores.push(s);
 
-    // ---- Run simulation & update ----
-    document.getElementById('runBtn').addEventListener('click', () => {
-      const nWeeks = parseInt(document.getElementById('nWeeks').value);
-      const mAttackers = parseInt(document.getElementById('mAttackers').value);
-      const p = parseFloat(document.getElementById('p').value);
-      const nTrials = parseInt(document.getElementById('nTrials').value);
+  const barW = W / (scores.length + 2);
+  let maxFreq = 0;
+  for (const s of scores) {
+    const f = (counts.get(s) || 0) / R;
+    if (f > maxFreq) maxFreq = f;
+  }
+  if (maxFreq === 0) maxFreq = 1;
 
-      const data = simulateSecurity(nWeeks, mAttackers, p, nTrials);
-      const scores = data.map(d => d.totalScore);
-      const simFreqs = data.map(d => d.freq);
-      const binomVals = data.map(d => d.expected);
+  const yOf = f => y0 - f * (H / maxFreq);
+  const xOf = s => x0 + ((s + n) / 2) * barW;
 
-      Plotly.react('chart', [
-        { ...traceSim, x: scores, y: simFreqs },
-        { ...traceBinom, x: scores, y: binomVals }
-      ], layout, { responsive: false });
-    });
-  </script>
+  // axes
+  ctx.strokeStyle = "#e2e8f0"; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x0 + W, y0); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x0, y0 - H); ctx.lineTo(x0, y0); ctx.stroke();
+
+  // ticks + labels X-axis: min s, 0, max s
+  ctx.fillStyle = "#f8fafc";
+  ctx.font = "12px system-ui, sans-serif";
+  ctx.textAlign = "center"; ctx.textBaseline = "top";
+  const smin = -n, smax = n;
+  const xticks = [smin, 0, smax];
+  for (const s of xticks) {
+    const x = xOf(s);
+    ctx.beginPath();
+    ctx.moveTo(x, y0);
+    ctx.lineTo(x, y0 + 6);
+    ctx.stroke();
+    ctx.fillText(`${s}`, x, y0 + 8);
+  }
+
+  // ticks + labels Y-axis: freq 0, maxFreq
+  ctx.textAlign = "right"; ctx.textBaseline = "middle";
+  const ytickvals = [0, maxFreq];
+  for (const f of ytickvals) {
+    const y = yOf(f);
+    ctx.beginPath();
+    ctx.moveTo(x0 - 6, y);
+    ctx.lineTo(x0, y);
+    ctx.stroke();
+    ctx.fillText(f.toFixed(2), x0 - 8, y);
+  }
+
+  // empirical bars
+  ctx.fillStyle = "#ffffff";
+  for (const s of scores) {
+    const f = (counts.get(s) || 0) / R;
+    const x = xOf(s);
+    const y = yOf(f);
+    ctx.fillRect(x - barW * 0.4, y, barW * 0.8, y0 - y);
+  }
+
+  // theoretical line
+  ctx.strokeStyle = "#22c55e";
+  ctx.lineWidth = 2;
+  ctx.beginPath(); let first = true;
+  for (let k = 0; k <= n; k++) {
+    const s = n - 2*k;
+    const x = xOf(s);
+    const y = yOf(pmf[k]);
+    if (first) { ctx.moveTo(x, y); first = false; }
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+}
+
+// ===== Table and metrics =====
+function updateTable(counts, n, R, pmf) {
+  let html = `<table><thead><tr><th>s = n−2k</th><th>k</th><th>Count</th><th>Empirical</th><th>Theoretical</th></tr></thead><tbody>`;
+  for (let k = 0; k <= n; k++) {
+    const s = n - 2*k;
+    const c = counts.get(s) || 0;
+    const f = c / R;
+    html += `<tr><td>${s}</td><td>${k}</td><td>${c}</td><td>${f.toFixed(4)}</td><td>${pmf[k].toFixed(4)}</td></tr>`;
+  }
+  html += `</tbody></table>`;
+  document.getElementById("tableWrap").innerHTML = html;
+}
+
+function totalVariation(counts, n, R, pmf) {
+  let tv = 0;
+  for (let k = 0; k <= n; k++) {
+    const s = n - 2*k;
+    const f = (counts.get(s) || 0) / R;
+    tv += Math.abs(f - pmf[k]);
+  }
+  return 0.5 * tv;
+}
+
+// ===== Main control logic =====
+const walkCanvas = document.getElementById("walkCanvas");
+const histCanvas = document.getElementById("histCanvas");
+let lastState = {};
+
+document.getElementById("run").addEventListener("click", async () => {
+  const n = clamp(parseInt(document.getElementById("weeks").value,10) || 0, 1, 20000);
+  const m = clamp(parseInt(document.getElementById("attackers").value,10) || 0, 1, 100000);
+  const p = clamp(parseFloat(document.getElementById("pval").value) || 0, 0, 1);
+  const R = clamp(parseInt(document.getElementById("runs").value,10) || 0, 1, 200000);
+  const keep = clamp(parseInt(document.getElementById("keep").value,10) || 0, 0, R);
+  const animate = (document.getElementById("animate").value === "true");
+  const batch = clamp(parseInt(document.getElementById("batch").value,10) || 500, 1, 10000);
+
+  const q = 1 - Math.pow(1 - p, m);
+  const pmf = binomialPMF(n, q);
+
+  document.getElementById("run-info").innerHTML =
+    `n = <b>${n}</b>, m = <b>${m}</b>, p = <b>${p.toFixed(3)}</b> → q = <b>${q.toFixed(6)}</b>, runs = <b>${R}</b>.`;
+
+  if (!animate) {
+    const { paths, counts } = simulateWalks(n, R, q, keep);
+    drawPaths(paths, walkCanvas);
+    drawHistogram(counts, n, R, pmf, histCanvas);
+    updateTable(counts, n, R, pmf);
+    const tv = totalVariation(counts, n, R, pmf);
+    document.getElementById("run-stats").innerHTML =
+      `Total variation distance = <b>${tv.toFixed(5)}</b>`;
+    lastState = { paths, counts, n, R, pmf, q };
+    return;
+  }
+
+  // Animated mode
+  let acc = new Map(), drawn = [], done = 0;
+  while (done < R) {
+    const chunk = Math.min(batch, R - done);
+    const { paths, counts } = simulateWalks(n, chunk, q, Math.min(keep, 150));
+    for (const [s,c] of counts.entries()) {
+      acc.set(s, (acc.get(s) || 0) + c);
+    }
+    drawn = drawn.concat(paths).slice(-keep);
+    done += chunk;
+
+    drawPaths(drawn, walkCanvas);
+    drawHistogram(acc, n, done, pmf, histCanvas);
+    updateTable(acc, n, done, pmf);
+    const tv = totalVariation(acc, n, done, pmf);
+    document.getElementById("run-stats").innerHTML =
+      `Runs: ${done} / ${R} | Total variation = <b>${tv.toFixed(5)}</b>`;
+
+    lastState = { paths: drawn, counts: new Map(acc), n, R: done, pmf, q };
+    await new Promise(r => setTimeout(r, 70));
+  }
+});
+
+document.getElementById("clear").addEventListener("click", () => {
+  const { ctx: c1, width: w1, height: h1 } = prepareCanvas(walkCanvas);
+  c1.clearRect(0, 0, w1, h1);
+  const { ctx: c2, width: w2, height: h2 } = prepareCanvas(histCanvas);
+  c2.clearRect(0, 0, w2, h2);
+  document.getElementById("tableWrap").textContent = "Cleared.";
+  document.getElementById("run-info").textContent = "";
+  document.getElementById("run-stats").textContent = "";
+  lastState = {};
+});
+
+window.addEventListener("resize", () => {
+  if (!lastState.n) return;
+  const { paths, counts, n, R, pmf } = lastState;
+  if (paths?.length) drawPaths(paths, walkCanvas);
+  if (pmf?.length) drawHistogram(counts, n, R, pmf, histCanvas);
+});
+</script>
+
 </body>
 </html>
