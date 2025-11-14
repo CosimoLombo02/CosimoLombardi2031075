@@ -36,66 +36,35 @@ As n becomes very large, this method converges to a Poisson process.
 
 ---
 ## Demo
-<style>
-body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    background: #f7f7f7;
-}
-h1 {
-    text-align: center;
-}
-.container {
-    max-width: 900px;
-    margin: auto;
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-.controls {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-    gap: 10px;
-}
-label {
-    font-weight: bold;
-}
-input[type=number] {
-    width: 80px;
-    padding: 5px;
-}
-button {
-    padding: 6px 12px;
-    font-size: 1rem;
-    cursor: pointer;
-}
-canvas {
-    background: #f0f0f0;
-    border: 1px solid #ccc;
-}
-</style>
+## Demo
 
-<body>
+<style>
+body { font-family: Arial, sans-serif; background:#f7f7f7; padding:20px; }
+.container { max-width:900px; margin:auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+.controls { display:flex; justify-content:center; gap:10px; margin-bottom:20px; }
+input[type=number] { width:80px; padding:5px; }
+button { padding:6px 12px; cursor:pointer; }
+canvas { background:#f0f0f0; border:1px solid #ccc; display:block; margin:auto; }
+</style>
 
 <div class="container">
 <h1>Counting Process Simulation</h1>
-<p>Simulate a counting process over time interval T=1 where events occur independently at a constant rate λ.</p>
 
 <div class="controls">
-    <label for="lambda">Rate λ:</label>
-    <input type="number" id="lambda" value="5" step="0.1">
-    <label for="n">Number of intervals n:</label>
-    <input type="number" id="n" value="5000">
-    <button id="simulateBtn">Simulate</button>
+  <label>Rate λ:</label>
+  <input id="lambda" type="number" value="5" step="0.1">
+  <label>Intervals n:</label>
+  <input id="n" type="number" value="5000">
+  <button id="simulateBtn">Simulate</button>
 </div>
 
 <canvas id="chart" width="800" height="400"></canvas>
+<div id="info" style="text-align:center; margin-top:10px;"></div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-let chartInstance = null; // store chart globally
+let chartInstance = null;
 
 function simulateCountingProcess() {
     const T = 1;
@@ -110,17 +79,14 @@ function simulateCountingProcess() {
     for (let i = 0; i < n; i++) {
         time.push(i * dt);
         if (Math.random() < lambda * dt) {
-            count += 1;
+            count++;
         }
         N_t.push(count);
     }
 
     const ctx = document.getElementById('chart').getContext('2d');
 
-    // destroy previous chart if exists
-    if (chartInstance) {
-        chartInstance.destroy();
-    }
+    if (chartInstance) chartInstance.destroy();
 
     chartInstance = new Chart(ctx, {
         type: 'line',
@@ -137,23 +103,18 @@ function simulateCountingProcess() {
         options: {
             responsive: true,
             scales: {
-                x: {
-                    title: { display: true, text: 'Time' }
-                },
-                y: {
-                    title: { display: true, text: 'Number of events N(t)' },
-                    beginAtZero: true
-                }
+                x: { title: { display:true, text:'Time' } },
+                y: { title: { display:true, text:'Number of events N(t)' }, beginAtZero:true }
             }
         }
     });
+
+    document.getElementById('info').textContent = 
+      `Simulated N(t) with λ=${lambda} over n=${n} intervals. Total events: ${count}.`;
 }
 
-// Attach event listener after DOM is loaded
 document.getElementById('simulateBtn').addEventListener('click', simulateCountingProcess);
 </script>
-
-</body>
 
 ##  Code and code explanation
 
@@ -253,4 +214,5 @@ window.chart = new Chart(ctx, {
 
 
 The JS code and explanation are aligned with **university-level stochastic process coursework** and satisfy the requirement to simulate, approximate, and analyze a counting process over [0, T].
+
 
