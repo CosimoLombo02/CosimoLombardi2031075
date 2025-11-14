@@ -37,3 +37,11 @@ Server, attackers and many more
 Confrontation of homework7 and homework4
 [Homework 8](homework8/homework8.md)
 
+# Homework9
+Main interpretation of probability and many more
+[Homework 9](homework9/homework9.md)
+
+# Homework10
+Simulate counting process
+[Homework 10](homework10/homework10.md)
+
